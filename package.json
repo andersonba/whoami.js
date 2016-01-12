@@ -1,0 +1,27 @@
+{
+  "name": "whoami.js",
+  "version": "1.0.0",
+  "description": "A simple and lightweight browser logger and detection library in 2kb",
+  "main": "dist/whoami.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andersonba/whoami.js.git"
+  },
+  "keywords": [
+    "feedback",
+    "screenshot",
+    "printscreen",
+    "capture",
+    "browser",
+    "identifier"
+  ],
+  "author": "Anderson de Oliveira <andersonba@me.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andersonba/whoami.js/issues"
+  },
+  "homepage": "https://github.com/andersonba/whoami.js#readme"
+}

@@ -86,19 +86,18 @@
       };
 
       function init() {
+        var submitBtn = document.getElementById('submit');
+
         // button
-        document.getElementById('submit').addEventListener('click', function(e) {
+        submitBtn.addEventListener('click', function(e) {
           e.preventDefault();
           execute();
         });
 
         // shortcut
         document.addEventListener('keydown', e => {
-          const isModifier = !!e.ctrlKey;
-          const isKey = String.fromCharCode(e.which) === '0';
-
-          if (isModifier && isKey) {
-            execute();
+          if (e.ctrlKey && String.fromCharCode(e.which) === '0') {
+            submitBtn.dispatchEvent(new Event('click'));
           }
         });
       };

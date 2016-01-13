@@ -31,11 +31,11 @@ class whoami {
       warn: true
     };
 
-    this.output = {};
     this.loggers = {
       exception: [],
       console: []
     };
+    this.output = {};
     this.api = api;
     this.clipboard = !!clipboard;
     this.customData = customData;
@@ -62,9 +62,6 @@ class whoami {
   }
 
   _init() {
-    // bind global event
-    document.addEventListener(constants.executeEvent, this.execute);
-
     // bind shortcut
     if (this.shortcut) {
       this._bindShortcut();
@@ -82,9 +79,7 @@ class whoami {
   }
 
   execute() {
-    // reseting output
     this.output = {};
-
     this._showLoading();
 
     // load html2canvas.js external script
@@ -190,7 +185,7 @@ class whoami {
       const isKey = String.fromCharCode(e.which) === constants.shortcutKey;
 
       if (isModifier && isKey) {
-        document.dispatchEvent(new Event(constants.executeEvent));
+        this.execute();
       }
     });
   }

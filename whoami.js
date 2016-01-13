@@ -57,6 +57,8 @@ var whoami =
 
 	var _utils = __webpack_require__(2);
 
+	var _utils2 = _interopRequireDefault(_utils);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -78,12 +80,16 @@ var whoami =
 	    };
 
 	    this.reports = [];
+	    this.reportsException = [];
+	    this.reportsConsole = [];
 	    this.userContext = userContext;
 	    this.filters = _extends(defaultFilters, filters);
 
 	    // binds
 	    this.execute = this.execute.bind(this);
 	    this._runCatches = this._runCatches.bind(this);
+	    this._bindException = this._bindException.bind(this);
+	    this._bindConsole = this._bindConsole.bind(this);
 
 	    // start
 	    this._init();
@@ -98,7 +104,17 @@ var whoami =
 	    }
 	  }, {
 	    key: '_init',
-	    value: function _init() {}
+	    value: function _init() {
+	      // save exceptions
+	      if (this.filters.exception) {
+	        this._bindException();
+	      }
+
+	      // save console output
+	      if (this.filters.console) {
+	        this._bindConsole();
+	      }
+	    }
 	  }, {
 	    key: '_runCatches',
 	    value: function _runCatches() {
@@ -109,6 +125,33 @@ var whoami =
 	        if (_this[fnName] && typeof _this[fnName] === 'function') {
 	          _this[fnName]();
 	        }
+	      });
+	    }
+	  }, {
+	    key: '_bindException',
+	    value: function _bindException() {
+	      window.onerror = function (msg, url, line, col, error) {
+	        this.reportsException.push({
+	          time: +new Date(),
+	          message: msg,
+	          url: url,
+	          line: line,
+	          col: col
+	        });
+	      }.bind(this);
+	    }
+	  }, {
+	    key: '_bindConsole',
+	    value: function _bindConsole() {
+	      var _this2 = this;
+
+	      ['log', 'error', 'debug', 'info', 'warn'].map(function (name) {
+	        _utils2.default.patchFunction(window.console, name, function () {
+	          this.reportsConsole.push({
+	            time: +new Date(),
+	            message: Array.prototype.slice.call(arguments).join(' ')
+	          });
+	        }.bind(_this2));
 	      });
 	    }
 	  }, {
@@ -158,12 +201,22 @@ var whoami =
 	  }, {
 	    key: 'catchCookie',
 	    value: function catchCookie() {
-	      this._addReport('cookie', (0, _utils.getCookies)());
+	      this._addReport('cookie', _utils2.default.getCookies());
 	    }
 	  }, {
 	    key: 'catchLocalStorage',
 	    value: function catchLocalStorage() {
-	      this._addReport('localStorage', localStorage);
+	      this._addReport('localStorage', _extends({}, localStorage));
+	    }
+	  }, {
+	    key: 'catchException',
+	    value: function catchException() {
+	      this._addReport('exception', this.reportsException);
+	    }
+	  }, {
+	    key: 'catchConsole',
+	    value: function catchConsole() {
+	      this._addReport('console', this.reportsConsole);
 	    }
 	  }]);
 
@@ -208,6 +261,19 @@ var whoami =
 	      cookies[pair[0]] = unescape(pair[1]);
 	    }
 	    return cookies;
+	  },
+	  patchFunction: function patchFunction(obj, name, fn) {
+	    if (!obj[name] || typeof obj[name] !== 'function') {
+	      return;
+	    }
+
+	    var oldFn = obj[name];
+	    obj[name] = function () {
+	      oldFn.apply(obj, arguments);
+	      fn.apply(obj, arguments);
+	    };
+
+	    return obj;
 	  }
 	};
 

@@ -90,20 +90,29 @@ class whoami {
     // load html2canvas.js external script
     utils.loadScript(constants.html2canvasUrl, () => {
       this._runCatches(() => {
-        // submit data via ajax
-        if (this.api) {
-          this._sendAjax(this._hideLoading);
+
+        const ajaxOrIgnore = (done) => {
+          if (this.api) {
+            return this._sendAjax(done);
+          }
+          done();
         }
 
-        // copy to clipboard
-        if (this.clipboard) {
-          this._copyClipboard();
-        }
+        // send ajax or callback
+        ajaxOrIgnore(() => {
 
-        // pass to callback
-        if (this.callback) {
-          this.callback(this.output);
-        }
+          // copy to clipboard
+          if (this.clipboard) {
+            this._copyClipboard();
+          }
+
+          // pass to callback
+          if (this.callback) {
+            this.callback(this.output);
+          }
+
+          this._hideLoading();
+        });
       });
     });
   }

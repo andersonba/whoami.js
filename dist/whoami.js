@@ -171,20 +171,29 @@ var whoami =
 	      // load html2canvas.js external script
 	      _utils2.default.loadScript(_constants2.default.html2canvasUrl, function () {
 	        _this2._runCatches(function () {
-	          // submit data via ajax
-	          if (_this2.api) {
-	            _this2._sendAjax(_this2._hideLoading);
-	          }
 
-	          // copy to clipboard
-	          if (_this2.clipboard) {
-	            _this2._copyClipboard();
-	          }
+	          var ajaxOrIgnore = function ajaxOrIgnore(done) {
+	            if (_this2.api) {
+	              return _this2._sendAjax(done);
+	            }
+	            done();
+	          };
 
-	          // pass to callback
-	          if (_this2.callback) {
-	            _this2.callback(_this2.output);
-	          }
+	          // send ajax or callback
+	          ajaxOrIgnore(function () {
+
+	            // copy to clipboard
+	            if (_this2.clipboard) {
+	              _this2._copyClipboard();
+	            }
+
+	            // pass to callback
+	            if (_this2.callback) {
+	              _this2.callback(_this2.output);
+	            }
+
+	            _this2._hideLoading();
+	          });
 	        });
 	      });
 	    }

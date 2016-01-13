@@ -1,0 +1,43 @@
+﻿* { font-family: Arial; }
+body {
+  padding: 0 10px;
+}
+
+label { font-size: 13px; }
+
+code {
+  background: #f8f8ff;
+  border: 1px dashed black;
+  padding: 6px;
+  font-size: 13px;
+  display: block;
+}
+
+#submit {
+  margin-top: 20px;
+}
+
+.shortcut {
+  font-size: 11px;
+  color: #777;
+  font-style: italic;
+}
+
+#screenshot {
+  display: none;
+}
+
+#screenshot-img {
+  min-width: 500px;
+  width: 50%;
+  border: 1px dashed;
+}
+
+.filter-group {
+  padding-left: 20px;
+}
+
+#result {
+  margin-top: 15px;
+  padding-top: 5px;
+}

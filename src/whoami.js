@@ -252,4 +252,8 @@ class whoami {
 }
 
 
+window.__whoami = {
+  loadedScripts: []
+};
+
 module.exports = whoami;

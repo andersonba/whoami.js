@@ -358,6 +358,10 @@ var whoami =
 	  return whoami;
 	}();
 
+	window.__whoami = {
+	  loadedScripts: []
+	};
+
 	module.exports = whoami;
 
 /***/ },
@@ -445,6 +449,11 @@ var whoami =
 	    return obj;
 	  },
 	  loadScript: function loadScript(src, done) {
+	    // prevent reload
+	    if (window.__whoami.loadedScripts.indexOf(src) >= 0) {
+	      return done();
+	    }
+
 	    // create script tag
 	    var s = document.createElement('script');
 	    s.type = 'text/javascript';
@@ -455,6 +464,8 @@ var whoami =
 	    // append to head
 	    var h = document.getElementsByTagName('head')[0];
 	    h.appendChild(s);
+
+	    window.__whoami.loadedScripts.push(src);
 	  }
 	};
 

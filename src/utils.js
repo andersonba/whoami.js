@@ -49,6 +49,11 @@ export default {
   },
 
   loadScript(src, done) {
+    // prevent reload
+    if (window.__whoami.loadedScripts.indexOf(src) >= 0) {
+      return done()
+    }
+
     // create script tag
     const s = document.createElement('script');
     s.type = 'text/javascript';
@@ -59,6 +64,8 @@ export default {
     // append to head
     const h = document.getElementsByTagName('head')[0];
     h.appendChild(s);
+
+    window.__whoami.loadedScripts.push(src);
   }
 
 }

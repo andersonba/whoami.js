@@ -12,7 +12,8 @@ class whoami {
 
     const defaultFilters = {
       basic: true,
-      userContext: true
+      userContext: true,
+      screenshot: true
     };
 
     this.reports = [];
@@ -20,6 +21,7 @@ class whoami {
     this.reportsConsole = [];
     this.userContext = userContext;
     this.filters = Object.assign(defaultFilters, filters);
+    this.enabledFilters = Object.keys(this.filters).filter(f => this.filters[f]);
 
     // binds
     this.execute = this.execute.bind(this);
@@ -34,26 +36,50 @@ class whoami {
   }
 
   execute() {
-    this._runCatches();
+    this._showLoading();
+
+    // load html2canvas.js external script
+    utils.loadScript(constants.html2canvasUrl, () => {
+      this._runCatches(() => {
+        this._hideLoading();
+      });
+    });
+  }
+
+  _showLoading() {
+    console.log('Loading: start');
+  }
+
+  _hideLoading() {
+    console.log('Loading: done');
   }
 
   _init() {
     // save exceptions
-    if (this.filters.exception) {
+    if ('exception' in this.enabledFilters) {
       this._bindException();
     }
 
     // save console output
-    if (this.filters.console) {
+    if ('console' in this.enabledFilters) {
       this._bindConsole();
     }
   }
 
-  _runCatches() {
-    Object.keys(this.filters).map(f => {
+  _runCatches(done) {
+    let returned = 0;
+    const enabledFilters = this.enabledFilters;
+
+    enabledFilters.map(f => {
       const fnName = 'catch' + f.charAt(0).toUpperCase() + f.slice(1);
       if (this[fnName] && typeof(this[fnName]) === 'function') {
-        this[fnName]();
+        this[fnName](function() {
+          returned++;
+
+          if (returned === enabledFilters.length) {
+            done();
+          }
+        });
       }
     });
   }
@@ -103,7 +129,7 @@ class whoami {
     });
   }
 
-  catchBasic() {
+  catchBasic(done) {
     this._addReport('basic', {
       title: document.title,
       url: window.location.href,
@@ -111,29 +137,43 @@ class whoami {
       userAgent: navigator.userAgent,
       resolution: `${screen.width}x${screen.height}`
     });
+    done();
   }
 
-  catchUserContext() {
-    if (!this.userContext) {
-      return;
+  catchUserContext(done) {
+    if (this.userContext) {
+      this._addReport('userContext', this.userContext);
     }
-    this._addReport('userContext', this.userContext);
+    done();
   }
 
-  catchCookie() {
+  catchCookie(done) {
     this._addReport('cookie', utils.getCookies());
+    done();
   }
 
-  catchLocalStorage() {
+  catchLocalStorage(done) {
     this._addReport('localStorage', Object.assign({}, localStorage));
+    done();
   }
 
-  catchException() {
+  catchException(done) {
     this._addReport('exception', this.reportsException);
+    done();
   }
 
-  catchConsole() {
+  catchConsole(done) {
     this._addReport('console', this.reportsConsole);
+    done();
+  }
+
+  catchScreenshot(done) {
+    window.html2canvas(document.body, {
+      onrendered: canvas => {
+        this._addReport('screenshot', canvas.toDataURL());
+        done();
+      }
+    });
   }
 
 }

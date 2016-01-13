@@ -22,6 +22,19 @@ export default {
     };
 
     return obj;
+  },
+
+  loadScript(src, done) {
+    // create script tag
+    const s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    s.src = src;
+    s.addEventListener('load', done, false);
+
+    // append to head
+    const h = document.getElementsByTagName('head')[0];
+    h.appendChild(s);
   }
 
 }

@@ -122,6 +122,22 @@ var whoami =
 	      }
 	      this._addReport('userContext', this.userContext);
 	    }
+	  }, {
+	    key: 'catchCookie',
+	    value: function catchCookie() {
+	      var cookies = {};
+	      var pairs = document.cookie.split(';');
+	      for (var i = 0, len = pairs.length; i < len; i++) {
+	        var pair = pairs[i].trim().split('=');
+	        cookies[pair[0]] = unescape(pair[1]);
+	      }
+	      this._addReport('cookie', cookies);
+	    }
+	  }, {
+	    key: 'catchLocalStorage',
+	    value: function catchLocalStorage() {
+	      this._addReport('localStorage', localStorage);
+	    }
 	  }]);
 
 	  return whoami;

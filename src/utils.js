@@ -8,6 +8,20 @@ export default {
       cookies[pair[0]] = unescape(pair[1]);
     }
     return cookies;
+  },
+
+  patchFunction(obj, name, fn) {
+    if (!obj[name] || typeof(obj[name]) !== 'function') {
+      return;
+    }
+
+    const oldFn = obj[name];
+    obj[name] = function() {
+      oldFn.apply(obj, arguments);
+      fn.apply(obj, arguments);
+    };
+
+    return obj;
   }
 
 }

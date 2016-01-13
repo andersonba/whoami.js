@@ -16,7 +16,14 @@
 
     <script src="./whoami.js"></script>
     <script>
-      window._me = new whoami();
+      window._me = new whoami({
+        filters: {
+          exception: true,
+          console: true,
+          cookie: true,
+          localStorage: true
+        }
+      });
     </script>
   </body>
 </html>

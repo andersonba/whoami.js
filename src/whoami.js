@@ -1,5 +1,5 @@
 import constants from './constants';
-import { getCookies } from './utils';
+import utils from './utils';
 
 class whoami {
 
@@ -16,12 +16,16 @@ class whoami {
     };
 
     this.reports = [];
+    this.reportsException = [];
+    this.reportsConsole = [];
     this.userContext = userContext;
     this.filters = Object.assign(defaultFilters, filters);
 
     // binds
     this.execute = this.execute.bind(this);
     this._runCatches = this._runCatches.bind(this);
+    this._bindException = this._bindException.bind(this);
+    this._bindConsole = this._bindConsole.bind(this);
 
     // start
     this._init();
@@ -34,6 +38,15 @@ class whoami {
   }
 
   _init() {
+    // save exceptions
+    if (this.filters.exception) {
+      this._bindException();
+    }
+
+    // save console output
+    if (this.filters.console) {
+      this._bindConsole();
+    }
   }
 
   _runCatches() {
@@ -42,6 +55,29 @@ class whoami {
       if (this[fnName] && typeof(this[fnName]) === 'function') {
         this[fnName]();
       }
+    });
+  }
+
+  _bindException() {
+    window.onerror = function(msg, url, line, col, error) {
+      this.reportsException.push({
+        time: +new Date(),
+        message: msg,
+        url: url,
+        line: line,
+        col: col
+      });
+    }.bind(this)
+  }
+
+  _bindConsole() {
+    ['log', 'error', 'debug', 'info', 'warn'].map(name => {
+      utils.patchFunction(window.console, name, function() {
+        this.reportsConsole.push({
+          time: +new Date(),
+          message: Array.prototype.slice.call(arguments).join(' ')
+        })
+      }.bind(this));
     });
   }
 
@@ -85,11 +121,19 @@ class whoami {
   }
 
   catchCookie() {
-    this._addReport('cookie', getCookies());
+    this._addReport('cookie', utils.getCookies());
   }
 
   catchLocalStorage() {
-    this._addReport('localStorage', localStorage);
+    this._addReport('localStorage', Object.assign({}, localStorage));
+  }
+
+  catchException() {
+    this._addReport('exception', this.reportsException);
+  }
+
+  catchConsole() {
+    this._addReport('console', this.reportsConsole);
   }
 
 }

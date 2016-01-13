@@ -55,8 +55,6 @@ var whoami =
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
-
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var whoami = function () {
@@ -65,11 +63,11 @@ var whoami =
 
 	    _classCallCheck(this, whoami);
 
-	    _objectDestructuringEmpty(options);
-
-	    // storage
+	    var _options$context = options.context;
+	    var context = _options$context === undefined ? {} : _options$context;
 
 	    this.reports = [];
+	    this.userContext = context;
 
 	    this._bindEvent();
 	    this._bindShortcut();
@@ -115,6 +113,14 @@ var whoami =
 	        userAgent: navigator.userAgent,
 	        resolution: screen.width + 'x' + screen.height
 	      });
+	    }
+	  }, {
+	    key: 'catchUserContext',
+	    value: function catchUserContext() {
+	      if (!this.userContext) {
+	        return;
+	      }
+	      this._addReport('userContext', this.userContext);
 	    }
 	  }]);
 

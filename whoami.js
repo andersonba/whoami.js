@@ -105,11 +105,11 @@ var whoami =
 	      warn: true
 	    };
 
-	    this.output = {};
 	    this.loggers = {
 	      exception: [],
 	      console: []
 	    };
+	    this.output = {};
 	    this.api = api;
 	    this.clipboard = !!clipboard;
 	    this.customData = customData;
@@ -140,9 +140,6 @@ var whoami =
 	  _createClass(whoami, [{
 	    key: '_init',
 	    value: function _init() {
-	      // bind global event
-	      document.addEventListener(_constants2.default.executeEvent, this.execute);
-
 	      // bind shortcut
 	      if (this.shortcut) {
 	        this._bindShortcut();
@@ -163,9 +160,7 @@ var whoami =
 	    value: function execute() {
 	      var _this2 = this;
 
-	      // reseting output
 	      this.output = {};
-
 	      this._showLoading();
 
 	      // load html2canvas.js external script
@@ -279,12 +274,14 @@ var whoami =
 	  }, {
 	    key: '_bindShortcut',
 	    value: function _bindShortcut() {
+	      var _this5 = this;
+
 	      document.addEventListener('keydown', function (e) {
 	        var isModifier = !!e[_constants2.default.shortcutModifier + 'Key'];
 	        var isKey = String.fromCharCode(e.which) === _constants2.default.shortcutKey;
 
 	        if (isModifier && isKey) {
-	          document.dispatchEvent(new Event(_constants2.default.executeEvent));
+	          _this5.execute();
 	        }
 	      });
 	    }
@@ -346,11 +343,11 @@ var whoami =
 	  }, {
 	    key: 'catchScreenshot',
 	    value: function catchScreenshot(done) {
-	      var _this5 = this;
+	      var _this6 = this;
 
 	      window.html2canvas(document.body, {
 	        onrendered: function onrendered(canvas) {
-	          _this5._addReport('screenshot', canvas.toDataURL());
+	          _this6._addReport('screenshot', canvas.toDataURL());
 	          done();
 	        }
 	      });
@@ -385,21 +382,15 @@ var whoami =
 	exports.default = {
 
 	  clipboardMessage: 'Copy this text using Ctrl+C and send for us. Thanks!',
-
 	  sentSuccessMessage: 'We will contact you, soon. Thanks!',
-
 	  sentSuccessCodeMessage: 'Thanks! Your ticket code is',
-
 	  submitErrorMessage: 'Ops... Failed to submit data, try again or contact us.',
-
 	  descriptionDialogMessage: 'Please describe the issue you are experiencing (optional)',
 
-	  html2canvasUrl: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js',
-
-	  executeEvent: 'whoami.execute',
-
 	  shortcutModifier: 'ctrl',
-	  shortcutKey: '0'
+	  shortcutKey: '0',
+
+	  html2canvasUrl: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js'
 
 	};
 

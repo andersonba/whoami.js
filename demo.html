@@ -71,18 +71,22 @@
 
         document.getElementById('options').innerHTML = JSON.stringify(options);
         var instance = new whoami(options, function(output) {
+          var screenshot = output.screenshot;
+
+          // bug: to avoid crash memory
+          output.screenshot = 'BASE64_FORMAT';
           document.getElementById('output').value = JSON.stringify(output);
           submit.disabled = false;
 
           // show screenshot?
           var sDiv = document.getElementById('screenshotDiv');
-          sDiv.style.display = output.screenshot ? 'block' : 'none';
-          document.getElementById('screenshotImage').src = output.screenshot;
+          sDiv.style.display = screenshot ? 'block' : 'none';
+          document.getElementById('screenshotImage').src = screenshot;
 
           window.scroll(0, document.getElementById('result').offsetTop);
         });
 
-        document.dispatchEvent(new Event('whoami.execute'));
+        instance.execute();
       };
 
       function init() {

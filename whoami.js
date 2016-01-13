@@ -67,8 +67,12 @@ var whoami =
 
 	    _objectDestructuringEmpty(options);
 
-	    this.bindEvent();
-	    this.bindShortcut();
+	    // storage
+
+	    this.reports = [];
+
+	    this._bindEvent();
+	    this._bindShortcut();
 	  }
 
 	  _createClass(whoami, [{
@@ -77,13 +81,13 @@ var whoami =
 	      alert('Capturing...');
 	    }
 	  }, {
-	    key: 'bindEvent',
-	    value: function bindEvent() {
+	    key: '_bindEvent',
+	    value: function _bindEvent() {
 	      document.addEventListener(_constants2.default.executeEvent, this.execute);
 	    }
 	  }, {
-	    key: 'bindShortcut',
-	    value: function bindShortcut() {
+	    key: '_bindShortcut',
+	    value: function _bindShortcut() {
 	      document.addEventListener('keydown', function (e) {
 	        var isModifier = !!e[_constants2.default.shortcutModifier + 'Key'];
 	        var isKey = String.fromCharCode(e.which) === _constants2.default.shortcutKey;
@@ -91,6 +95,25 @@ var whoami =
 	        if (isModifier && isKey) {
 	          document.dispatchEvent(new Event(_constants2.default.executeEvent));
 	        }
+	      });
+	    }
+	  }, {
+	    key: '_addReport',
+	    value: function _addReport(name, value) {
+	      this.reports.push({
+	        name: name,
+	        value: value
+	      });
+	    }
+	  }, {
+	    key: 'catchBasic',
+	    value: function catchBasic() {
+	      this._addReport('basic', {
+	        title: document.title,
+	        url: window.location.href,
+	        origin: window.location.origin,
+	        userAgent: navigator.userAgent,
+	        resolution: screen.width + 'x' + screen.height
 	      });
 	    }
 	  }]);

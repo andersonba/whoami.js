@@ -4,10 +4,11 @@ class whoami {
 
   constructor(options = {}) {
     const {
+      context = {}
     } = options;
 
-    // storage
     this.reports = [];
+    this.userContext = context;
 
     this._bindEvent();
     this._bindShortcut();
@@ -47,6 +48,13 @@ class whoami {
       userAgent: navigator.userAgent,
       resolution: `${screen.width}x${screen.height}`
     });
+  }
+
+  catchUserContext() {
+    if (!this.userContext) {
+      return;
+    }
+    this._addReport('userContext', this.userContext);
   }
 
 }

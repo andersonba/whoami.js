@@ -198,6 +198,12 @@ class whoami {
     });
   }
 
+  catchDescription(done) {
+    const result = prompt(constants.descriptionDialogMessage);
+    this._addReport('description', result);
+    done();
+  }
+
 }
 
 

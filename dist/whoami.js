@@ -293,6 +293,13 @@ var whoami =
 	        }
 	      });
 	    }
+	  }, {
+	    key: 'catchDescription',
+	    value: function catchDescription(done) {
+	      var result = prompt(_constants2.default.descriptionDialogMessage);
+	      this._addReport('description', result);
+	      done();
+	    }
 	  }]);
 
 	  return whoami;
@@ -310,6 +317,8 @@ var whoami =
 	  value: true
 	});
 	exports.default = {
+
+	  descriptionDialogMessage: 'Please describe the issue you are experiencing (optional)',
 
 	  html2canvasUrl: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js',
 

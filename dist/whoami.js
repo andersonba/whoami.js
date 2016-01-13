@@ -131,6 +131,9 @@ var whoami =
 	    value: function execute() {
 	      var _this2 = this;
 
+	      // reseting output
+	      this.output = {};
+
 	      this._showLoading();
 
 	      // load html2canvas.js external script

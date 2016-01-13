@@ -55,6 +55,9 @@ class whoami {
   }
 
   execute() {
+    // reseting output
+    this.output = {};
+
     this._showLoading();
 
     // load html2canvas.js external script

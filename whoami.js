@@ -65,6 +65,8 @@ var whoami =
 
 	var whoami = function () {
 	  function whoami() {
+	    var _this = this;
+
 	    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
 	    _classCallCheck(this, whoami);
@@ -76,7 +78,8 @@ var whoami =
 
 	    var defaultFilters = {
 	      basic: true,
-	      userContext: true
+	      userContext: true,
+	      screenshot: true
 	    };
 
 	    this.reports = [];
@@ -84,6 +87,9 @@ var whoami =
 	    this.reportsConsole = [];
 	    this.userContext = userContext;
 	    this.filters = _extends(defaultFilters, filters);
+	    this.enabledFilters = Object.keys(this.filters).filter(function (f) {
+	      return _this.filters[f];
+	    });
 
 	    // binds
 	    this.execute = this.execute.bind(this);
@@ -100,30 +106,58 @@ var whoami =
 	  _createClass(whoami, [{
 	    key: 'execute',
 	    value: function execute() {
-	      this._runCatches();
+	      var _this2 = this;
+
+	      this._showLoading();
+
+	      // load html2canvas.js external script
+	      _utils2.default.loadScript(_constants2.default.html2canvasUrl, function () {
+	        _this2._runCatches(function () {
+	          _this2._hideLoading();
+	        });
+	      });
+	    }
+	  }, {
+	    key: '_showLoading',
+	    value: function _showLoading() {
+	      console.log('Loading: start');
+	    }
+	  }, {
+	    key: '_hideLoading',
+	    value: function _hideLoading() {
+	      console.log('Loading: done');
 	    }
 	  }, {
 	    key: '_init',
 	    value: function _init() {
 	      // save exceptions
-	      if (this.filters.exception) {
+	      if ('exception' in this.enabledFilters) {
 	        this._bindException();
 	      }
 
 	      // save console output
-	      if (this.filters.console) {
+	      if ('console' in this.enabledFilters) {
 	        this._bindConsole();
 	      }
 	    }
 	  }, {
 	    key: '_runCatches',
-	    value: function _runCatches() {
-	      var _this = this;
+	    value: function _runCatches(done) {
+	      var _this3 = this;
 
-	      Object.keys(this.filters).map(function (f) {
+	      var returned = 0;
+	      var enabledFilters = this.enabledFilters;
+
+	      enabledFilters.map(function (f) {
 	        var fnName = 'catch' + f.charAt(0).toUpperCase() + f.slice(1);
-	        if (_this[fnName] && typeof _this[fnName] === 'function') {
-	          _this[fnName]();
+	        if (_this3[fnName] && typeof _this3[fnName] === 'function') {
+	          _this3[fnName](function () {
+	            returned++;
+
+	            if (returned === enabledFilters.length) {
+	              done();
+	            }
+	          });
 	        }
 	      });
 	    }
@@ -143,7 +177,7 @@ var whoami =
 	  }, {
 	    key: '_bindConsole',
 	    value: function _bindConsole() {
-	      var _this2 = this;
+	      var _this4 = this;
 
 	      ['log', 'error', 'debug', 'info', 'warn'].map(function (name) {
 	        _utils2.default.patchFunction(window.console, name, function () {
@@ -151,7 +185,7 @@ var whoami =
 	            time: +new Date(),
 	            message: Array.prototype.slice.call(arguments).join(' ')
 	          });
-	        }.bind(_this2));
+	        }.bind(_this4));
 	      });
 	    }
 	  }, {
@@ -181,7 +215,7 @@ var whoami =
 	    }
 	  }, {
 	    key: 'catchBasic',
-	    value: function catchBasic() {
+	    value: function catchBasic(done) {
 	      this._addReport('basic', {
 	        title: document.title,
 	        url: window.location.href,
@@ -189,34 +223,51 @@ var whoami =
 	        userAgent: navigator.userAgent,
 	        resolution: screen.width + 'x' + screen.height
 	      });
+	      done();
 	    }
 	  }, {
 	    key: 'catchUserContext',
-	    value: function catchUserContext() {
-	      if (!this.userContext) {
-	        return;
+	    value: function catchUserContext(done) {
+	      if (this.userContext) {
+	        this._addReport('userContext', this.userContext);
 	      }
-	      this._addReport('userContext', this.userContext);
+	      done();
 	    }
 	  }, {
 	    key: 'catchCookie',
-	    value: function catchCookie() {
+	    value: function catchCookie(done) {
 	      this._addReport('cookie', _utils2.default.getCookies());
+	      done();
 	    }
 	  }, {
 	    key: 'catchLocalStorage',
-	    value: function catchLocalStorage() {
+	    value: function catchLocalStorage(done) {
 	      this._addReport('localStorage', _extends({}, localStorage));
+	      done();
 	    }
 	  }, {
 	    key: 'catchException',
-	    value: function catchException() {
+	    value: function catchException(done) {
 	      this._addReport('exception', this.reportsException);
+	      done();
 	    }
 	  }, {
 	    key: 'catchConsole',
-	    value: function catchConsole() {
+	    value: function catchConsole(done) {
 	      this._addReport('console', this.reportsConsole);
+	      done();
+	    }
+	  }, {
+	    key: 'catchScreenshot',
+	    value: function catchScreenshot(done) {
+	      var _this5 = this;
+
+	      window.html2canvas(document.body, {
+	        onrendered: function onrendered(canvas) {
+	          _this5._addReport('screenshot', canvas.toDataURL());
+	          done();
+	        }
+	      });
 	    }
 	  }]);
 
@@ -235,6 +286,8 @@ var whoami =
 	  value: true
 	});
 	exports.default = {
+
+	  html2canvasUrl: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js',
 
 	  executeEvent: 'whoami.execute',
 
@@ -274,6 +327,18 @@ var whoami =
 	    };
 
 	    return obj;
+	  },
+	  loadScript: function loadScript(src, done) {
+	    // create script tag
+	    var s = document.createElement('script');
+	    s.type = 'text/javascript';
+	    s.async = true;
+	    s.src = src;
+	    s.addEventListener('load', done, false);
+
+	    // append to head
+	    var h = document.getElementsByTagName('head')[0];
+	    h.appendChild(s);
 	  }
 	};
 

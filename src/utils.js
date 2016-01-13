@@ -4,6 +4,28 @@ export default {
     return Object.prototype.toString.call(arr) === '[object Array]';
   },
 
+  postRequest(url, data, done) {
+    const xhr = new (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    data = JSON.stringify(data);
+
+    xhr.open('POST', encodeURI(url), true);
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    xhr.setRequestHeader('Content-Length', data.length);
+    xhr.setRequestHeader('Connection', 'close');
+
+    xhr.onload = () => {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        let code;
+        try {
+          code = (JSON.parse(xhr.responseText) || {}).code
+        } catch(err) {}
+        return done(null, code);
+      }
+      done(new Error(xhr.statusText));
+    }
+    xhr.send(data);
+  },
+
   getCookies() {
     let cookies = {};
     const pairs = document.cookie.split(';');

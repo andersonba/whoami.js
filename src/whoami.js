@@ -6,6 +6,7 @@ class whoami {
   constructor(options = {}) {
 
     const {
+      api = null,
       userContext = null,
       filters = {}
     } = options;
@@ -29,6 +30,7 @@ class whoami {
       exception: [],
       console: []
     };
+    this.api = api;
     this.userContext = userContext;
 
     // configuring filters
@@ -56,7 +58,8 @@ class whoami {
     // load html2canvas.js external script
     utils.loadScript(constants.html2canvasUrl, () => {
       this._runCatches(() => {
-        this._hideLoading();
+        // submit data via ajax
+        this._submitData(this._hideLoading);
       });
     });
   }
@@ -67,6 +70,20 @@ class whoami {
 
   _hideLoading() {
     console.log('Loading: done');
+  }
+
+  _submitData(done) {
+    if (!this.api) { return; }
+
+    let data = JSON.stringify(this.output);
+    utils.postRequest(this.api, data, (err, code) => {
+      if (err) {
+        alert(constants.submitErrorMessage);
+      } else {
+        alert(code ? `${constants.sentSuccessCodeMessage} "${code}".` : constants.sentSuccessMessage);
+      }
+      done();
+    });
   }
 
   _init() {

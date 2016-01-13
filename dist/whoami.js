@@ -73,6 +73,8 @@ var whoami =
 
 	    _classCallCheck(this, whoami);
 
+	    var _options$api = options.api;
+	    var api = _options$api === undefined ? null : _options$api;
 	    var _options$userContext = options.userContext;
 	    var userContext = _options$userContext === undefined ? null : _options$userContext;
 	    var _options$filters = options.filters;
@@ -97,6 +99,7 @@ var whoami =
 	      exception: [],
 	      console: []
 	    };
+	    this.api = api;
 	    this.userContext = userContext;
 
 	    // configuring filters
@@ -130,7 +133,8 @@ var whoami =
 	      // load html2canvas.js external script
 	      _utils2.default.loadScript(_constants2.default.html2canvasUrl, function () {
 	        _this2._runCatches(function () {
-	          _this2._hideLoading();
+	          // submit data via ajax
+	          _this2._submitData(_this2._hideLoading);
 	        });
 	      });
 	    }
@@ -143,6 +147,23 @@ var whoami =
 	    key: '_hideLoading',
 	    value: function _hideLoading() {
 	      console.log('Loading: done');
+	    }
+	  }, {
+	    key: '_submitData',
+	    value: function _submitData(done) {
+	      if (!this.api) {
+	        return;
+	      }
+
+	      var data = JSON.stringify(this.output);
+	      _utils2.default.postRequest(this.api, data, function (err, code) {
+	        if (err) {
+	          alert(_constants2.default.submitErrorMessage);
+	        } else {
+	          alert(code ? _constants2.default.sentSuccessCodeMessage + ' "' + code + '".' : _constants2.default.sentSuccessMessage);
+	        }
+	        done();
+	      });
 	    }
 	  }, {
 	    key: '_init',
@@ -318,6 +339,12 @@ var whoami =
 	});
 	exports.default = {
 
+	  sentSuccessMessage: 'We will contact you, soon. Thanks!',
+
+	  sentSuccessCodeMessage: 'Thanks! Your ticket code is',
+
+	  submitErrorMessage: 'Ops... Failed to submit data, try again or contact us.',
+
 	  descriptionDialogMessage: 'Please describe the issue you are experiencing (optional)',
 
 	  html2canvasUrl: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js',
@@ -341,6 +368,27 @@ var whoami =
 	exports.default = {
 	  isArray: function isArray(arr) {
 	    return Object.prototype.toString.call(arr) === '[object Array]';
+	  },
+	  postRequest: function postRequest(url, data, done) {
+	    var xhr = new window.XMLHttpRequest() ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+	    data = JSON.stringify(data);
+
+	    xhr.open('POST', encodeURI(url), true);
+	    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	    xhr.setRequestHeader('Content-Length', data.length);
+	    xhr.setRequestHeader('Connection', 'close');
+
+	    xhr.onload = function () {
+	      if (xhr.readyState === 4 && xhr.status === 200) {
+	        var code = undefined;
+	        try {
+	          code = (JSON.parse(xhr.responseText) || {}).code;
+	        } catch (err) {}
+	        return done(null, code);
+	      }
+	      done(new Error(xhr.statusText));
+	    };
+	    xhr.send(data);
 	  },
 	  getCookies: function getCookies() {
 	    var cookies = {};

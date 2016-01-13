@@ -10,8 +10,6 @@ export default {
 
     xhr.open('POST', encodeURI(url), true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-    xhr.setRequestHeader('Content-Length', data.length);
-    xhr.setRequestHeader('Connection', 'close');
 
     xhr.onload = () => {
       if (xhr.readyState === 4 && xhr.status === 200) {

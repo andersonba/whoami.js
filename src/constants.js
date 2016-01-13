@@ -1,5 +1,7 @@
 export default {
 
+  clipboardMessage: 'Copy this text using Ctrl+C and send for us. Thanks!',
+
   sentSuccessMessage: 'We will contact you, soon. Thanks!',
 
   sentSuccessCodeMessage: 'Thanks! Your ticket code is',

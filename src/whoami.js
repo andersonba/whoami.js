@@ -8,7 +8,8 @@ class whoami {
     const {
       api = null,
       userContext = null,
-      filters = {}
+      filters = {},
+      clipboard = false
     } = options;
 
     const defaultFilters = {
@@ -31,6 +32,7 @@ class whoami {
       console: []
     };
     this.api = api;
+    this.clipboard = !!clipboard;
     this.userContext = userContext;
 
     // configuring filters
@@ -59,7 +61,14 @@ class whoami {
     utils.loadScript(constants.html2canvasUrl, () => {
       this._runCatches(() => {
         // submit data via ajax
-        this._submitData(this._hideLoading);
+        if (this.api) {
+          this._sendAjax(this._hideLoading);
+        }
+
+        // copy to clipboard
+        if (this.clipboard) {
+          this._copyClipboard();
+        }
       });
     });
   }
@@ -72,9 +81,11 @@ class whoami {
     console.log('Loading: done');
   }
 
-  _submitData(done) {
-    if (!this.api) { return; }
+  _copyClipboard() {
+    prompt(constants.clipboardMessage, JSON.stringify(this.output));
+  }
 
+  _sendAjax(done) {
     let data = JSON.stringify(this.output);
     utils.postRequest(this.api, data, (err, code) => {
       if (err) {

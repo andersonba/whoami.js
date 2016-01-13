@@ -3,8 +3,108 @@
   <head>
     <meta charset="utf-8">
     <title>Welcome to whoami.js</title>
+    <style>
+      * { font-family: Arial; }
+      label { font-size: 13px; }
+      #submit {
+        margin-top: 20px;
+      }
+      .shortcut {
+        font-size: 11px;
+        color: #777;
+        font-style: italic;
+      }
+      code {
+        background: #f8f8ff;
+        border: 1px dashed black;
+        padding: 6px;
+        font-size: 13px;
+        display: block;
+      }
+      #output {
+        display: block;
+        margin-top: 20px;
+        width: 100%;
+        height: 120px;
+      }
+      #screenshotDiv {
+        display: none;
+      }
+      #screenshotImage {
+        width: 50%;
+        border: 1px dashed;
+      }
+      .filter-group {
+        padding-left: 20px;
+      }
+    </style>
+    <script>
+      function execute() {
+        var submit = document.getElementById('submit');
+        submit.disabled = true;
+
+        function getValue(name) {
+          return document.querySelector('[name="'+name+'"]').checked;
+        }
+
+        var options = {
+          api: getValue('api') ? '/api' : null,
+          clipboard: getValue('clipboard'),
+          customData: getValue('customData') ? {uid: 123, email: 'andersonba@email.com'} : null,
+          shortcut: false,
+          filters: {
+            basic: getValue('basic'),
+            screenshot: getValue('screenshot'),
+            exception: getValue('exception'),
+            cookie: getValue('cookie'),
+            localStorage: getValue('localStorage'),
+            description: getValue('description'),
+            console: getValue('console') ? {
+              log: getValue('console.log'),
+              error: getValue('console.error'),
+              debug: getValue('console.debug'),
+              info: getValue('console.info'),
+              warn: getValue('console.warn'),
+            } : false
+          }
+        };
+
+        document.getElementById('options').innerHTML = JSON.stringify(options);
+        var instance = new whoami(options, function(output) {
+          document.getElementById('output').value = JSON.stringify(output);
+          submit.disabled = false;
+
+          // show screenshot?
+          var sDiv = document.getElementById('screenshotDiv');
+          sDiv.style.display = output.screenshot ? 'block' : 'none';
+          document.getElementById('screenshotImage').src = output.screenshot;
+
+          window.scroll(0, document.getElementById('result').offsetTop);
+        });
+
+        document.dispatchEvent(new Event('whoami.execute'));
+      };
+
+      function init() {
+        // button
+        document.getElementById('submit').addEventListener('click', function(e) {
+          e.preventDefault();
+          execute();
+        });
+
+        // shortcut
+        document.addEventListener('keydown', e => {
+          const isModifier = !!e.ctrlKey;
+          const isKey = String.fromCharCode(e.which) === '0';
+
+          if (isModifier && isKey) {
+            execute();
+          }
+        });
+      };
+    </script>
   </head>
-  <body>
+  <body onload="init();">
     <h1>whoami.js</h1>
 
     <p>
@@ -14,19 +114,42 @@
       no sea takimata sanctus est Lorem ipsum dolor sit amet.
     </p>
 
+    <h4>Action</h4>
+
+    <label><input type="checkbox" name="api" /> Send via Ajax</label><br/>
+    <label><input type="checkbox" name="clipboard" /> Clipboard</label>
+
+    <h4>Filters</h4>
+    <label><input type="checkbox" name="basic" checked /> Browser informations</label><br/>
+    <label><input type="checkbox" name="customData" checked /> Custom Data</label><br/>
+    <label><input type="checkbox" name="screenshot" checked /> Screenshot</label><br/>
+    <label><input type="checkbox" name="cookie" checked /> Domain's Cookies</label><br/>
+    <label><input type="checkbox" name="localStorage" checked /> LocalStorage</label><br/>
+    <label><input type="checkbox" name="exception" checked /> Exceptions</label><br/>
+    <label><input type="checkbox" name="console" checked /> Console</label><br/>
+      <div class="filter-group">
+        <label><input type="checkbox" name="console.log" checked /> log</label><br/>
+        <label><input type="checkbox" name="console.error" checked /> error</label><br/>
+        <label><input type="checkbox" name="console.debug" checked /> debug</label><br/>
+        <label><input type="checkbox" name="console.info" checked /> info</label><br/>
+        <label><input type="checkbox" name="console.warn" checked /> warn</label><br/>
+      </div>
+    <label><input type="checkbox" name="description" /> Description (prompt)</label><br/>
+
+    <button id="submit">Capture!</button>
+    <span class="shortcut">or press <b>Ctrl + 0</b></span>
+
+    <h4 id="result">Options</h4>
+    <code id="options"></code>
+
+    <h4>Output</h4>
+    <textarea id="output" readonly></textarea>
+
+    <div id="screenshotDiv">
+      <h4>Screenshot</h4>
+      <img src="" id="screenshotImage" />
+    </div>
+
     <script src="./whoami.js"></script>
-    <script>
-      window._me = new whoami({
-        api: '/api',
-        clipboard: true,
-        filters: {
-          exception: true,
-          console: true,
-          cookie: true,
-          localStorage: true,
-          description: true
-        }
-      });
-    </script>
   </body>
 </html>

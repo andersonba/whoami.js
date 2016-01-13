@@ -1,5 +1,9 @@
 export default {
 
+  isArray(arr) {
+    return Object.prototype.toString.call(arr) === '[object Array]';
+  },
+
   getCookies() {
     let cookies = {};
     const pairs = document.cookie.split(';');

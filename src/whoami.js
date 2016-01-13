@@ -16,12 +16,29 @@ class whoami {
       screenshot: true
     };
 
-    this.reports = [];
-    this.reportsException = [];
-    this.reportsConsole = [];
+    const defaultConsoleFilter = {
+      log: true,
+      error: true,
+      debug: true,
+      info: true,
+      warn: true
+    };
+
+    this.output = {};
+    this.loggers = {
+      exception: [],
+      console: []
+    };
     this.userContext = userContext;
+
+    // configuring filters
     this.filters = Object.assign(defaultFilters, filters);
     this.enabledFilters = Object.keys(this.filters).filter(f => this.filters[f]);
+    let consoleFilter = this.filters.console;
+    if (consoleFilter !== false) {
+      consoleFilter = typeof(consoleFilter) === 'object' ? consoleFilter : {};
+      this.filters.console = Object.assign(defaultConsoleFilter, consoleFilter);
+    }
 
     // binds
     this.execute = this.execute.bind(this);
@@ -31,8 +48,6 @@ class whoami {
 
     // start
     this._init();
-    this._bindEvent();
-    this._bindShortcut();
   }
 
   execute() {
@@ -55,28 +70,33 @@ class whoami {
   }
 
   _init() {
+    // bind global event
+    document.addEventListener(constants.executeEvent, this.execute);
+
+    // bind shortcut
+    this._bindShortcut();
+
     // save exceptions
-    if ('exception' in this.enabledFilters) {
+    if (this.enabledFilters.indexOf('exception') >= 0) {
       this._bindException();
     }
 
     // save console output
-    if ('console' in this.enabledFilters) {
+    if (this.enabledFilters.indexOf('console') >= 0) {
       this._bindConsole();
     }
   }
 
   _runCatches(done) {
-    let returned = 0;
-    const enabledFilters = this.enabledFilters;
+    let finished = 0;
+    const enabled = this.enabledFilters;
 
-    enabledFilters.map(f => {
+    enabled.map(f => {
       const fnName = 'catch' + f.charAt(0).toUpperCase() + f.slice(1);
       if (this[fnName] && typeof(this[fnName]) === 'function') {
-        this[fnName](function() {
-          returned++;
-
-          if (returned === enabledFilters.length) {
+        this[fnName](() => {
+          finished++;
+          if (enabled.length === finished) {
             done();
           }
         });
@@ -85,8 +105,8 @@ class whoami {
   }
 
   _bindException() {
-    window.onerror = function(msg, url, line, col, error) {
-      this.reportsException.push({
+    window.onerror = function(msg, url, line, col) {
+      this.loggers.exception.push({
         time: +new Date(),
         message: msg,
         url: url,
@@ -97,18 +117,17 @@ class whoami {
   }
 
   _bindConsole() {
-    ['log', 'error', 'debug', 'info', 'warn'].map(name => {
+    const enabledFns = Object.keys(this.filters.console)
+      .filter(f => this.filters.console[f]);
+
+    enabledFns.map(name => {
       utils.patchFunction(window.console, name, function() {
-        this.reportsConsole.push({
+        this.loggers.console.push({
           time: +new Date(),
           message: Array.prototype.slice.call(arguments).join(' ')
         })
       }.bind(this));
     });
-  }
-
-  _bindEvent() {
-    document.addEventListener(constants.executeEvent, this.execute);
   }
 
   _bindShortcut() {
@@ -123,10 +142,12 @@ class whoami {
   }
 
   _addReport(name, value) {
-    this.reports.push({
-      name: name,
-      value: value
-    });
+    let existent = this.output[name];
+    if (existent) {
+      existent = utils.isArray(existent) ? existent : [existent];
+      existent.push(value);
+    }
+    this.output[name] = existent || value;
   }
 
   catchBasic(done) {
@@ -135,7 +156,8 @@ class whoami {
       url: window.location.href,
       origin: window.location.origin,
       userAgent: navigator.userAgent,
-      resolution: `${screen.width}x${screen.height}`
+      resolution: `${screen.width}x${screen.height}`,
+      time: +new Date()
     });
     done();
   }
@@ -158,12 +180,12 @@ class whoami {
   }
 
   catchException(done) {
-    this._addReport('exception', this.reportsException);
+    this._addReport('exception', this.loggers.exception);
     done();
   }
 
   catchConsole(done) {
-    this._addReport('console', this.reportsConsole);
+    this._addReport('console', this.loggers.console);
     done();
   }
 

@@ -47,6 +47,8 @@ var whoami =
 
 	'use strict';
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -82,14 +84,31 @@ var whoami =
 	      screenshot: true
 	    };
 
-	    this.reports = [];
-	    this.reportsException = [];
-	    this.reportsConsole = [];
+	    var defaultConsoleFilter = {
+	      log: true,
+	      error: true,
+	      debug: true,
+	      info: true,
+	      warn: true
+	    };
+
+	    this.output = {};
+	    this.loggers = {
+	      exception: [],
+	      console: []
+	    };
 	    this.userContext = userContext;
+
+	    // configuring filters
 	    this.filters = _extends(defaultFilters, filters);
 	    this.enabledFilters = Object.keys(this.filters).filter(function (f) {
 	      return _this.filters[f];
 	    });
+	    var consoleFilter = this.filters.console;
+	    if (consoleFilter !== false) {
+	      consoleFilter = (typeof consoleFilter === 'undefined' ? 'undefined' : _typeof(consoleFilter)) === 'object' ? consoleFilter : {};
+	      this.filters.console = _extends(defaultConsoleFilter, consoleFilter);
+	    }
 
 	    // binds
 	    this.execute = this.execute.bind(this);
@@ -99,8 +118,6 @@ var whoami =
 
 	    // start
 	    this._init();
-	    this._bindEvent();
-	    this._bindShortcut();
 	  }
 
 	  _createClass(whoami, [{
@@ -130,13 +147,19 @@ var whoami =
 	  }, {
 	    key: '_init',
 	    value: function _init() {
+	      // bind global event
+	      document.addEventListener(_constants2.default.executeEvent, this.execute);
+
+	      // bind shortcut
+	      this._bindShortcut();
+
 	      // save exceptions
-	      if ('exception' in this.enabledFilters) {
+	      if (this.enabledFilters.indexOf('exception') >= 0) {
 	        this._bindException();
 	      }
 
 	      // save console output
-	      if ('console' in this.enabledFilters) {
+	      if (this.enabledFilters.indexOf('console') >= 0) {
 	        this._bindConsole();
 	      }
 	    }
@@ -145,16 +168,15 @@ var whoami =
 	    value: function _runCatches(done) {
 	      var _this3 = this;
 
-	      var returned = 0;
-	      var enabledFilters = this.enabledFilters;
+	      var finished = 0;
+	      var enabled = this.enabledFilters;
 
-	      enabledFilters.map(function (f) {
+	      enabled.map(function (f) {
 	        var fnName = 'catch' + f.charAt(0).toUpperCase() + f.slice(1);
 	        if (_this3[fnName] && typeof _this3[fnName] === 'function') {
 	          _this3[fnName](function () {
-	            returned++;
-
-	            if (returned === enabledFilters.length) {
+	            finished++;
+	            if (enabled.length === finished) {
 	              done();
 	            }
 	          });
@@ -164,8 +186,8 @@ var whoami =
 	  }, {
 	    key: '_bindException',
 	    value: function _bindException() {
-	      window.onerror = function (msg, url, line, col, error) {
-	        this.reportsException.push({
+	      window.onerror = function (msg, url, line, col) {
+	        this.loggers.exception.push({
 	          time: +new Date(),
 	          message: msg,
 	          url: url,
@@ -179,19 +201,18 @@ var whoami =
 	    value: function _bindConsole() {
 	      var _this4 = this;
 
-	      ['log', 'error', 'debug', 'info', 'warn'].map(function (name) {
+	      var enabledFns = Object.keys(this.filters.console).filter(function (f) {
+	        return _this4.filters.console[f];
+	      });
+
+	      enabledFns.map(function (name) {
 	        _utils2.default.patchFunction(window.console, name, function () {
-	          this.reportsConsole.push({
+	          this.loggers.console.push({
 	            time: +new Date(),
 	            message: Array.prototype.slice.call(arguments).join(' ')
 	          });
 	        }.bind(_this4));
 	      });
-	    }
-	  }, {
-	    key: '_bindEvent',
-	    value: function _bindEvent() {
-	      document.addEventListener(_constants2.default.executeEvent, this.execute);
 	    }
 	  }, {
 	    key: '_bindShortcut',
@@ -208,10 +229,12 @@ var whoami =
 	  }, {
 	    key: '_addReport',
 	    value: function _addReport(name, value) {
-	      this.reports.push({
-	        name: name,
-	        value: value
-	      });
+	      var existent = this.output[name];
+	      if (existent) {
+	        existent = _utils2.default.isArray(existent) ? existent : [existent];
+	        existent.push(value);
+	      }
+	      this.output[name] = existent || value;
 	    }
 	  }, {
 	    key: 'catchBasic',
@@ -221,7 +244,8 @@ var whoami =
 	        url: window.location.href,
 	        origin: window.location.origin,
 	        userAgent: navigator.userAgent,
-	        resolution: screen.width + 'x' + screen.height
+	        resolution: screen.width + 'x' + screen.height,
+	        time: +new Date()
 	      });
 	      done();
 	    }
@@ -248,13 +272,13 @@ var whoami =
 	  }, {
 	    key: 'catchException',
 	    value: function catchException(done) {
-	      this._addReport('exception', this.reportsException);
+	      this._addReport('exception', this.loggers.exception);
 	      done();
 	    }
 	  }, {
 	    key: 'catchConsole',
 	    value: function catchConsole(done) {
-	      this._addReport('console', this.reportsConsole);
+	      this._addReport('console', this.loggers.console);
 	      done();
 	    }
 	  }, {
@@ -306,6 +330,9 @@ var whoami =
 	  value: true
 	});
 	exports.default = {
+	  isArray: function isArray(arr) {
+	    return Object.prototype.toString.call(arr) === '[object Array]';
+	  },
 	  getCookies: function getCookies() {
 	    var cookies = {};
 	    var pairs = document.cookie.split(';');

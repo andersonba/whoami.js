@@ -79,6 +79,8 @@ var whoami =
 	    var userContext = _options$userContext === undefined ? null : _options$userContext;
 	    var _options$filters = options.filters;
 	    var filters = _options$filters === undefined ? {} : _options$filters;
+	    var _options$clipboard = options.clipboard;
+	    var clipboard = _options$clipboard === undefined ? false : _options$clipboard;
 
 	    var defaultFilters = {
 	      basic: true,
@@ -100,6 +102,7 @@ var whoami =
 	      console: []
 	    };
 	    this.api = api;
+	    this.clipboard = !!clipboard;
 	    this.userContext = userContext;
 
 	    // configuring filters
@@ -134,7 +137,14 @@ var whoami =
 	      _utils2.default.loadScript(_constants2.default.html2canvasUrl, function () {
 	        _this2._runCatches(function () {
 	          // submit data via ajax
-	          _this2._submitData(_this2._hideLoading);
+	          if (_this2.api) {
+	            _this2._sendAjax(_this2._hideLoading);
+	          }
+
+	          // copy to clipboard
+	          if (_this2.clipboard) {
+	            _this2._copyClipboard();
+	          }
 	        });
 	      });
 	    }
@@ -149,12 +159,13 @@ var whoami =
 	      console.log('Loading: done');
 	    }
 	  }, {
-	    key: '_submitData',
-	    value: function _submitData(done) {
-	      if (!this.api) {
-	        return;
-	      }
-
+	    key: '_copyClipboard',
+	    value: function _copyClipboard() {
+	      prompt(_constants2.default.clipboardMessage, JSON.stringify(this.output));
+	    }
+	  }, {
+	    key: '_sendAjax',
+	    value: function _sendAjax(done) {
 	      var data = JSON.stringify(this.output);
 	      _utils2.default.postRequest(this.api, data, function (err, code) {
 	        if (err) {
@@ -339,6 +350,8 @@ var whoami =
 	});
 	exports.default = {
 
+	  clipboardMessage: 'Copy this text using Ctrl+C and send for us. Thanks!',
+
 	  sentSuccessMessage: 'We will contact you, soon. Thanks!',
 
 	  sentSuccessCodeMessage: 'Thanks! Your ticket code is',
@@ -375,8 +388,6 @@ var whoami =
 
 	    xhr.open('POST', encodeURI(url), true);
 	    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-	    xhr.setRequestHeader('Content-Length', data.length);
-	    xhr.setRequestHeader('Connection', 'close');
 
 	    xhr.onload = function () {
 	      if (xhr.readyState === 4 && xhr.status === 200) {

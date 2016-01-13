@@ -70,21 +70,30 @@ var whoami =
 	    var _this = this;
 
 	    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var callback = arguments[1];
 
 	    _classCallCheck(this, whoami);
 
-	    var _options$api = options.api;
+	    if (typeof options === 'function') {
+	      callback = options;
+	      options = {};
+	    }
+
+	    var _options = options;
+	    var _options$api = _options.api;
 	    var api = _options$api === undefined ? null : _options$api;
-	    var _options$userContext = options.userContext;
-	    var userContext = _options$userContext === undefined ? null : _options$userContext;
-	    var _options$filters = options.filters;
+	    var _options$customData = _options.customData;
+	    var customData = _options$customData === undefined ? null : _options$customData;
+	    var _options$filters = _options.filters;
 	    var filters = _options$filters === undefined ? {} : _options$filters;
-	    var _options$clipboard = options.clipboard;
+	    var _options$clipboard = _options.clipboard;
 	    var clipboard = _options$clipboard === undefined ? false : _options$clipboard;
+	    var _options$shortcut = _options.shortcut;
+	    var shortcut = _options$shortcut === undefined ? true : _options$shortcut;
 
 	    var defaultFilters = {
 	      basic: true,
-	      userContext: true,
+	      customData: true,
 	      screenshot: true
 	    };
 
@@ -103,7 +112,9 @@ var whoami =
 	    };
 	    this.api = api;
 	    this.clipboard = !!clipboard;
-	    this.userContext = userContext;
+	    this.customData = customData;
+	    this.shortcut = shortcut;
+	    this.callback = callback;
 
 	    // configuring filters
 	    this.filters = _extends(defaultFilters, filters);
@@ -127,6 +138,27 @@ var whoami =
 	  }
 
 	  _createClass(whoami, [{
+	    key: '_init',
+	    value: function _init() {
+	      // bind global event
+	      document.addEventListener(_constants2.default.executeEvent, this.execute);
+
+	      // bind shortcut
+	      if (this.shortcut) {
+	        this._bindShortcut();
+	      }
+
+	      // save exceptions
+	      if (this.enabledFilters.indexOf('exception') >= 0) {
+	        this._bindException();
+	      }
+
+	      // save console output
+	      if (this.enabledFilters.indexOf('console') >= 0) {
+	        this._bindConsole();
+	      }
+	    }
+	  }, {
 	    key: 'execute',
 	    value: function execute() {
 	      var _this2 = this;
@@ -147,6 +179,11 @@ var whoami =
 	          // copy to clipboard
 	          if (_this2.clipboard) {
 	            _this2._copyClipboard();
+	          }
+
+	          // pass to callback
+	          if (_this2.callback) {
+	            _this2.callback(_this2.output);
 	          }
 	        });
 	      });
@@ -178,25 +215,6 @@ var whoami =
 	        }
 	        done();
 	      });
-	    }
-	  }, {
-	    key: '_init',
-	    value: function _init() {
-	      // bind global event
-	      document.addEventListener(_constants2.default.executeEvent, this.execute);
-
-	      // bind shortcut
-	      this._bindShortcut();
-
-	      // save exceptions
-	      if (this.enabledFilters.indexOf('exception') >= 0) {
-	        this._bindException();
-	      }
-
-	      // save console output
-	      if (this.enabledFilters.indexOf('console') >= 0) {
-	        this._bindConsole();
-	      }
 	    }
 	  }, {
 	    key: '_runCatches',
@@ -285,10 +303,10 @@ var whoami =
 	      done();
 	    }
 	  }, {
-	    key: 'catchUserContext',
-	    value: function catchUserContext(done) {
-	      if (this.userContext) {
-	        this._addReport('userContext', this.userContext);
+	    key: 'catchCustomData',
+	    value: function catchCustomData(done) {
+	      if (this.customData) {
+	        this._addReport('customData', this.customData);
 	      }
 	      done();
 	    }

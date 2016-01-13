@@ -3,18 +3,23 @@ import utils from './utils';
 
 class whoami {
 
-  constructor(options = {}) {
+  constructor(options = {}, callback) {
+    if (typeof(options) === 'function') {
+      callback = options;
+      options = {};
+    }
 
     const {
       api = null,
-      userContext = null,
+      customData = null,
       filters = {},
-      clipboard = false
+      clipboard = false,
+      shortcut = true
     } = options;
 
     const defaultFilters = {
       basic: true,
-      userContext: true,
+      customData: true,
       screenshot: true
     };
 
@@ -33,7 +38,9 @@ class whoami {
     };
     this.api = api;
     this.clipboard = !!clipboard;
-    this.userContext = userContext;
+    this.customData = customData;
+    this.shortcut = shortcut;
+    this.callback = callback;
 
     // configuring filters
     this.filters = Object.assign(defaultFilters, filters);
@@ -54,6 +61,26 @@ class whoami {
     this._init();
   }
 
+  _init() {
+    // bind global event
+    document.addEventListener(constants.executeEvent, this.execute);
+
+    // bind shortcut
+    if (this.shortcut) {
+      this._bindShortcut();
+    }
+
+    // save exceptions
+    if (this.enabledFilters.indexOf('exception') >= 0) {
+      this._bindException();
+    }
+
+    // save console output
+    if (this.enabledFilters.indexOf('console') >= 0) {
+      this._bindConsole();
+    }
+  }
+
   execute() {
     // reseting output
     this.output = {};
@@ -71,6 +98,11 @@ class whoami {
         // copy to clipboard
         if (this.clipboard) {
           this._copyClipboard();
+        }
+
+        // pass to callback
+        if (this.callback) {
+          this.callback(this.output);
         }
       });
     });
@@ -98,24 +130,6 @@ class whoami {
       }
       done();
     });
-  }
-
-  _init() {
-    // bind global event
-    document.addEventListener(constants.executeEvent, this.execute);
-
-    // bind shortcut
-    this._bindShortcut();
-
-    // save exceptions
-    if (this.enabledFilters.indexOf('exception') >= 0) {
-      this._bindException();
-    }
-
-    // save console output
-    if (this.enabledFilters.indexOf('console') >= 0) {
-      this._bindConsole();
-    }
   }
 
   _runCatches(done) {
@@ -193,9 +207,9 @@ class whoami {
     done();
   }
 
-  catchUserContext(done) {
-    if (this.userContext) {
-      this._addReport('userContext', this.userContext);
+  catchCustomData(done) {
+    if (this.customData) {
+      this._addReport('customData', this.customData);
     }
     done();
   }

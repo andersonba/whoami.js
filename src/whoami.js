@@ -1,21 +1,48 @@
 import constants from './constants';
+import { getCookies } from './utils';
 
 class whoami {
 
   constructor(options = {}) {
+
     const {
-      context = {}
+      userContext = null,
+      filters = {}
     } = options;
 
-    this.reports = [];
-    this.userContext = context;
+    const defaultFilters = {
+      basic: true,
+      userContext: true
+    };
 
+    this.reports = [];
+    this.userContext = userContext;
+    this.filters = Object.assign(defaultFilters, filters);
+
+    // binds
+    this.execute = this.execute.bind(this);
+    this._runCatches = this._runCatches.bind(this);
+
+    // start
+    this._init();
     this._bindEvent();
     this._bindShortcut();
   }
 
   execute() {
-    alert('Capturing...');
+    this._runCatches();
+  }
+
+  _init() {
+  }
+
+  _runCatches() {
+    Object.keys(this.filters).map(f => {
+      const fnName = 'catch' + f.charAt(0).toUpperCase() + f.slice(1);
+      if (this[fnName] && typeof(this[fnName]) === 'function') {
+        this[fnName]();
+      }
+    });
   }
 
   _bindEvent() {
@@ -58,13 +85,7 @@ class whoami {
   }
 
   catchCookie() {
-    let cookies = {};
-    const pairs = document.cookie.split(';');
-    for (let i=0, len=pairs.length; i < len; i++) {
-      const pair = pairs[i].trim().split('=');
-      cookies[pair[0]] = unescape(pair[1]);
-    }
-    this._addReport('cookie', cookies);
+    this._addReport('cookie', getCookies());
   }
 
   catchLocalStorage() {

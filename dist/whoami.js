@@ -47,11 +47,15 @@ var whoami =
 
 	'use strict';
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _constants = __webpack_require__(1);
 
 	var _constants2 = _interopRequireDefault(_constants);
+
+	var _utils = __webpack_require__(2);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -63,12 +67,26 @@ var whoami =
 
 	    _classCallCheck(this, whoami);
 
-	    var _options$context = options.context;
-	    var context = _options$context === undefined ? {} : _options$context;
+	    var _options$userContext = options.userContext;
+	    var userContext = _options$userContext === undefined ? null : _options$userContext;
+	    var _options$filters = options.filters;
+	    var filters = _options$filters === undefined ? {} : _options$filters;
+
+	    var defaultFilters = {
+	      basic: true,
+	      userContext: true
+	    };
 
 	    this.reports = [];
-	    this.userContext = context;
+	    this.userContext = userContext;
+	    this.filters = _extends(defaultFilters, filters);
 
+	    // binds
+	    this.execute = this.execute.bind(this);
+	    this._runCatches = this._runCatches.bind(this);
+
+	    // start
+	    this._init();
 	    this._bindEvent();
 	    this._bindShortcut();
 	  }
@@ -76,7 +94,22 @@ var whoami =
 	  _createClass(whoami, [{
 	    key: 'execute',
 	    value: function execute() {
-	      alert('Capturing...');
+	      this._runCatches();
+	    }
+	  }, {
+	    key: '_init',
+	    value: function _init() {}
+	  }, {
+	    key: '_runCatches',
+	    value: function _runCatches() {
+	      var _this = this;
+
+	      Object.keys(this.filters).map(function (f) {
+	        var fnName = 'catch' + f.charAt(0).toUpperCase() + f.slice(1);
+	        if (_this[fnName] && typeof _this[fnName] === 'function') {
+	          _this[fnName]();
+	        }
+	      });
 	    }
 	  }, {
 	    key: '_bindEvent',
@@ -125,13 +158,7 @@ var whoami =
 	  }, {
 	    key: 'catchCookie',
 	    value: function catchCookie() {
-	      var cookies = {};
-	      var pairs = document.cookie.split(';');
-	      for (var i = 0, len = pairs.length; i < len; i++) {
-	        var pair = pairs[i].trim().split('=');
-	        cookies[pair[0]] = unescape(pair[1]);
-	      }
-	      this._addReport('cookie', cookies);
+	      this._addReport('cookie', (0, _utils.getCookies)());
 	    }
 	  }, {
 	    key: 'catchLocalStorage',
@@ -161,6 +188,27 @@ var whoami =
 	  shortcutModifier: 'ctrl',
 	  shortcutKey: '0'
 
+	};
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = {
+	  getCookies: function getCookies() {
+	    var cookies = {};
+	    var pairs = document.cookie.split(';');
+	    for (var i = 0, len = pairs.length; i < len; i++) {
+	      var pair = pairs[i].trim().split('=');
+	      cookies[pair[0]] = unescape(pair[1]);
+	    }
+	    return cookies;
+	  }
 	};
 
 /***/ }

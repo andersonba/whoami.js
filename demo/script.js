@@ -1,17 +1,43 @@
-﻿// start
-var submitBtn = document.getElementById('submit');
+﻿var submitBtn = document.getElementById('submit');
+var taskName = document.getElementById('tasks-name');
+var taskFunction = document.getElementById('tasks-function');
+
+// submit button
+submitBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  configureAndExecute();
+});
+
+// shortcut
 document.addEventListener('keydown', e => {
   if (e.ctrlKey && String.fromCharCode(e.which) === '0') {
     submitBtn.dispatchEvent(new Event('click'));
   }
 });
-submitBtn.addEventListener('click', function() {
-  configureAndExecute();
+
+// tasks input
+document.getElementById('tasks-input').addEventListener('change', function() {
+  document.getElementById('tasks-group').style.display = this.checked ? 'block' : 'none';
 });
 
 
 function isChecked(name) {
   return document.querySelector('[name="'+name+'"]').checked;
+}
+
+function mountTasks() {
+  var output = {};
+  output[taskName.value] = eval('fn = ' + taskFunction.value);
+  return output;
+}
+
+function rawCode(options) {
+  if (isChecked('tasks')) {
+    delete options.filters.tasks;
+    options.filters.tasks = {};
+    options.filters.tasks[taskName.value] = taskFunction.value;
+  }
+  return 'new whoami(' + JSON.stringify(options) + ');';
 }
 
 function configureAndExecute() {
@@ -24,6 +50,7 @@ function configureAndExecute() {
     customData: isChecked('customData') ? {uid: 123, email: 'andersonba@email.com'} : null,
     shortcut: false,
     filters: {
+      tasks: isChecked('tasks') ? mountTasks() : null,
       basic: isChecked('basic'),
       screenshot: isChecked('screenshot'),
       exception: isChecked('exception'),
@@ -40,12 +67,15 @@ function configureAndExecute() {
     }
   };
 
-  document.getElementById('options').innerHTML = 'new whoami(' + JSON.stringify(options) + ');';
-  var instance = new whoami(options, function(output) {
+  document.getElementById('options').innerHTML = rawCode(JSON.parse(JSON.stringify(options)));
+
+  var me = new whoami(options, function(output) {
     var screenshot = output.screenshot;
 
     // bug: to avoid crash memory
-    output.screenshot = 'BASE64_FORMAT';
+    if (isChecked('screenshot')) {
+      output.screenshot = 'BASE64_FORMAT';
+    }
     document.getElementById('output').innerHTML = JSON.stringify(output);
     submit.disabled = false;
 
@@ -57,5 +87,5 @@ function configureAndExecute() {
     window.scroll(0, document.getElementById('result').offsetTop);
   });
 
-  instance.execute();
+  me.execute();
 };

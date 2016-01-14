@@ -20,7 +20,8 @@ class whoami {
     const defaultFilters = {
       basic: true,
       customData: true,
-      screenshot: true
+      screenshot: true,
+      tasks: false
     };
 
     const defaultConsoleFilter = {
@@ -251,6 +252,36 @@ class whoami {
     const result = prompt(constants.descriptionDialogMessage);
     this._addReport('description', result);
     done();
+  }
+
+  catchTasks(done) {
+    const self = this;
+    const tasks = this.filters.tasks || {};
+    let finished = 0;
+    let output = {};
+
+    function checkFinalize() {
+      if (finished >= Object.keys(tasks).length) {
+        self._addReport('tasks', output);
+        done();
+      }
+    }
+
+    for (let k in tasks) {
+      // async
+      var val = tasks[k]((v) => {
+        output[k] = v;
+        finished++;
+        checkFinalize();
+      });
+
+      // sync
+      if (val) {
+        output[k] = val;
+        finished++;
+        checkFinalize();
+      }
+    }
   }
 
 }

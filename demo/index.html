@@ -36,6 +36,11 @@
       <label><input type="checkbox" name="console.info" checked /> info</label><br/>
       <label><input type="checkbox" name="console.warn" checked /> warn</label><br/>
     </div>
+    <label><input id="tasks-input" type="checkbox" name="tasks" /> Tasks runner</label><br/>
+    <div id="tasks-group" class="filter-group">
+      <input id="tasks-name" type="text" value="sumResult" placeholder="task name" />
+      <input id="tasks-function" type="text" value="function() { return 4+4; }" placeholder="function code" />
+    </div>
 
     <button id="submit">Click here</button>
     <span class="shortcut">or press <b>Ctrl + 0</b></span>

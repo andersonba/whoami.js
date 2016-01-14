@@ -41,3 +41,13 @@ code {
   margin-top: 15px;
   padding-top: 5px;
 }
+
+#tasks-group {
+  display: none;
+}
+#tasks-name {
+  width: 100px;
+}
+#tasks-function {
+  width: 240px;
+}

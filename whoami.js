@@ -94,7 +94,8 @@ var whoami =
 	    var defaultFilters = {
 	      basic: true,
 	      customData: true,
-	      screenshot: true
+	      screenshot: true,
+	      tasks: false
 	    };
 
 	    var defaultConsoleFilter = {
@@ -358,6 +359,44 @@ var whoami =
 	      var result = prompt(_constants2.default.descriptionDialogMessage);
 	      this._addReport('description', result);
 	      done();
+	    }
+	  }, {
+	    key: 'catchTasks',
+	    value: function catchTasks(done) {
+	      var self = this;
+	      var tasks = this.filters.tasks || {};
+	      var finished = 0;
+	      var output = {};
+
+	      function checkFinalize() {
+	        if (finished >= Object.keys(tasks).length) {
+	          self._addReport('tasks', output);
+	          done();
+	        }
+	      }
+
+	      var _loop = function _loop(k) {
+	        // async
+	        val = tasks[k](function (v) {
+	          output[k] = v;
+	          finished++;
+	          checkFinalize();
+	        });
+
+	        // sync
+
+	        if (val) {
+	          output[k] = val;
+	          finished++;
+	          checkFinalize();
+	        }
+	      };
+
+	      for (var k in tasks) {
+	        var val;
+
+	        _loop(k);
+	      }
 	    }
 	  }]);
 

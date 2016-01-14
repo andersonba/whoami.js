@@ -25,7 +25,8 @@ module.exports = {
       host: 'localhost',
       port: 3000,
       server: {
-        baseDir: ['demo', 'dist']
+        baseDir: ['dist'],
+        index: 'demo.html'
       }
     })
   ],

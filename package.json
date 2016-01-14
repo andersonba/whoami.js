@@ -2,7 +2,7 @@
   "name": "whoami.js",
   "version": "1.0.0",
   "description": "A simple and lightweight browser detection and logger library",
-  "main": "dist/whoami.js",
+  "main": "dist/whoami.min.js",
   "scripts": {
     "start": "webpack --watch",
     "lint": "eslint src"

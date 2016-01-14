@@ -1,4 +1,5 @@
-﻿var BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+﻿var webpack = require('webpack');
+var BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 module.exports = {
   context: __dirname,
@@ -7,7 +8,7 @@ module.exports = {
 
   output: {
     path: './dist',
-    filename: 'whoami.js',
+    filename: 'whoami.min.js',
     libraryTarget: 'var',
     library: 'whoami'
   },
@@ -25,10 +26,10 @@ module.exports = {
       host: 'localhost',
       port: 3000,
       server: {
-        baseDir: ['dist'],
-        index: 'demo.html'
+        baseDir: ['dist']
       }
-    })
+    }),
+    new webpack.optimize.UglifyJsPlugin({ minimize: true })
   ],
 
   resolve: {

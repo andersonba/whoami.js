@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>whoami.js demo</title>
+    <link rel="stylesheet" href="demo/style.css" />
+  </head>
+  <body>
+    <h1>Demo</h1>
+
+    <p>
+      <a href="https://github.com/andersonba/whoami.js">Whoami.js</a>
+      is a simple and lightweight browser logger and detection library in
+      3kb
+    </p>
+
+    <h4>Action</h4>
+
+    <label><input type="checkbox" name="api" /> Send via Ajax</label><br/>
+    <label><input type="checkbox" name="clipboard" /> Clipboard</label>
+
+    <h4>Filters</h4>
+
+    <label><input type="checkbox" name="description" /> Description (prompt)</label><br/>
+    <label><input type="checkbox" name="basic" checked /> Browser informations</label><br/>
+    <label><input type="checkbox" name="customData" checked /> Custom Data</label><br/>
+    <label><input type="checkbox" name="screenshot" checked /> Screenshot</label><br/>
+    <label><input type="checkbox" name="cookie" checked /> Domain's Cookies</label><br/>
+    <label><input type="checkbox" name="localStorage" checked /> LocalStorage</label><br/>
+    <label><input type="checkbox" name="exception" checked /> Exceptions</label><br/>
+    <label><input type="checkbox" name="console" checked /> Console</label><br/>
+    <div class="filter-group">
+      <label><input type="checkbox" name="console.log" checked /> log</label><br/>
+      <label><input type="checkbox" name="console.error" checked /> error</label><br/>
+      <label><input type="checkbox" name="console.debug" checked /> debug</label><br/>
+      <label><input type="checkbox" name="console.info" checked /> info</label><br/>
+      <label><input type="checkbox" name="console.warn" checked /> warn</label><br/>
+    </div>
+    <label><input id="tasks-input" type="checkbox" name="tasks" /> Tasks runner</label><br/>
+    <div id="tasks-group" class="filter-group">
+      <input id="tasks-name" type="text" value="sumResult" placeholder="task name" />
+      <input id="tasks-function" type="text" value="function() { return 4+4; }" placeholder="function code" />
+    </div>
+
+    <button id="submit">Click here</button>
+    <span class="shortcut">or press <b>Ctrl + 0</b></span>
+
+    <div id="result">
+      <h4>How to use</h4>
+      <code id="options"></code>
+
+      <h4>Payload</h4>
+      <code id="output"></code>
+
+      <div id="screenshot">
+        <h4>Screenshot</h4>
+        <img src="" id="screenshot-img" />
+      </div>
+    </div>
+
+    <script src="whoami.js"></script>
+    <script src="demo/script.js"></script>
+  </body>
+</html>

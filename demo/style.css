@@ -1,26 +1,182 @@
-﻿* { font-family: Arial; }
+﻿html {
+  font-size: 62.5%;
+}
+
 body {
-  padding: 0 10px;
+  padding: 0;
+  margin: 0;
+  font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 1.6em;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+}
+a {
+  color: #7F2A0C;
+  text-decoration: none;
+}
+a:hover {
+  color: #F3C858;
+}
+
+.button {
+  background-color: #F3C858;
+  border: 0.1rem solid #F3C858;
+  border-radius: 0.4rem;
+  box-sizing: border-box;
+  color: #7F2A0C;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  height: 3.8rem;
+  letter-spacing: 0.1rem;
+  line-height: 3.3rem;
+  padding: 0px 3rem;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.button:hover {
+  background: #f8ce62;
+  border-color: #f8ce62;
+}
+.button[disabled] {
+  background: #cab683;
+  border-color: #cab683;
+  color: #666;
+}
+.button.dark {
+  background-color: #7F2A0C;
+  border-color: #7F2A0C;
+  color: #fff;
+}
+input[type=text] {
+  -moz-appearance: none;
+  background-color: transparent;
+  border: 0.1rem solid #D1D1D1;
+  border-radius: 0.4rem;
+  box-shadow: none;
+  box-sizing: border-box;
+  height: 3.8rem;
+  padding: 0.6rem 1rem;
+  width: 100%;
+}
+input[type=text]:focus {
+  border-color: #f3c858;
+}
+
+nav {
+  position: fixed;
+  height: 50px;
+  width: 100%;
+  border-bottom: 1px solid #dab044;
+  background: #F3C858;
+  z-index: 1;
+}
+nav .container {
+  max-width: 770px;
+  margin: 0 auto;
+  text-align: right;
+}
+nav .container a {
+  padding: 10px;
+  display: inline-block;
+  text-decoration: none;
+  color: #7F2A0C;
+  line-height: 3rem;
+}
+nav .container a.home {
+  float: left;
+  padding: 5px 3px 1px 3px;
+  vertical-align: middle;
+  line-height: 5.6rem;
+}
+
+.github-corner {
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 2;
+}
+
+.logo {
+  height: 200px;
+}
+
+.keyboard {
+  height: 26px;
+  vertical-align: sub;
+  padding-right: 6px;
+}
+
+.press-key {
+  margin-top: 50px;
+}
+
+
+header {
+  background: #F3C858;
+  height: 100vh;
+  text-align: center;
+}
+header .container {
+  top: 50%;
+  position: relative;
+  transform: translateY(-50%);
+  color: #7F2A0C;
+}
+header .container .description {
+  font-size: 13px;
+}
+header .container .version {
+  font-size: 15px;
+  font-style: italic;
+}
+
+article {
+  padding: 55px 10px;
+  color: #7F2A0C;
+}
+article .container {
+  margin: 0 auto;
+  max-width: 760px;
+}
+
+footer {
+  color: #777;
+  max-width: 770px;
+  margin: 0 auto;
+  padding-bottom: 30px;
 }
 
 label { font-size: 13px; }
 
-code {
-  background: #f8f8ff;
-  border: 1px dashed black;
-  padding: 6px;
+code, .hljs {
+  color: #444;
+  background: #fdf9f0 !important;
+  padding: 1.5rem 1rem !important;
   font-size: 13px;
   display: block;
+  border-left: 3px solid #F3C858;
+  font-family: Menlo,Consolas,"Bitstream Vera Sans Mono","DejaVu Sans Mono",Monaco,monospace;
+  word-break: break-all;
 }
 
 #submit {
   margin-top: 20px;
 }
 
+.submit-area {
+  margin-top: 10px;
+}
+
 .shortcut {
-  font-size: 11px;
+  font-size: 13px;
   color: #777;
   font-style: italic;
+  padding-left: 5px;
 }
 
 #screenshot {
@@ -28,9 +184,12 @@ code {
 }
 
 #screenshot-img {
+  background: #fdf9f0;
   min-width: 500px;
   width: 50%;
-  border: 1px dashed;
+  padding: 1.5rem 1rem;
+  padding-left: 12px;
+  border-left: 3px solid #F3C858;
 }
 
 .filter-group {
@@ -42,12 +201,19 @@ code {
   padding-top: 5px;
 }
 
-#tasks-group {
-  display: none;
-}
 #tasks-name {
   width: 100px;
 }
 #tasks-function {
-  width: 240px;
+  width: 70%;
 }
+
+.hide { display: none; }
+
+.github-corner:hover .octo-arm { animation:octocat-wave 560ms ease-in-out }
+@keyframes octocat-wave { 0%,100%{transform:rotate(0)} 20%,60% {transform:rotate(-25deg)} 40%,80% {transform:rotate(10deg)} }
+@media (max-width:500px){ .github-corner:hover .octo-arm{animation:none} .github-corner .octo-arm {animation:octocat-wave 560ms ease-in-out} }
+
+
+/* HIGHLIGHT */
+.hljs-literal { color: #444; }

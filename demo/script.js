@@ -15,10 +15,13 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// tasks input
-document.getElementById('tasks-input').addEventListener('change', function() {
-  document.getElementById('tasks-group').style.display = this.checked ? 'block' : 'none';
-});
+// toggle groups
+var toggleGroup = document.getElementsByClassName('filter-group-input');
+for (var i=0, len=toggleGroup.length; i<len; i++) {
+  toggleGroup[i].addEventListener('change', function() {
+    this.parentNode.nextElementSibling.nextElementSibling.style.display = this.checked ? 'block' : 'none';
+  });
+}
 
 
 function isChecked(name) {
@@ -42,12 +45,15 @@ function rawCode(options) {
 
 function configureAndExecute() {
   var submit = document.getElementById('submit');
+  var result = document.getElementById('result');
+
   submit.disabled = true;
+  result.style.display = 'none';
 
   var options = {
     api: isChecked('api') ? '/api' : null,
     clipboard: isChecked('clipboard'),
-    customData: isChecked('customData') ? {uid: 123, email: 'andersonba@email.com'} : null,
+    customData: isChecked('customData') ? {id: 123, username: 'myuser', email: 'user@email.com'} : null,
     shortcut: false,
     filters: {
       tasks: isChecked('tasks') ? mountTasks() : null,
@@ -56,7 +62,7 @@ function configureAndExecute() {
       exception: isChecked('exception'),
       cookie: isChecked('cookie'),
       localStorage: isChecked('localStorage'),
-      description: isChecked('description'),
+      feedback: isChecked('feedback'),
       console: isChecked('console') ? {
         log: isChecked('console.log'),
         error: isChecked('console.error'),
@@ -67,8 +73,6 @@ function configureAndExecute() {
     }
   };
 
-  document.getElementById('options').innerHTML = rawCode(JSON.parse(JSON.stringify(options)));
-
   var me = new whoami(options, function(output) {
     var screenshot = output.screenshot;
 
@@ -76,6 +80,10 @@ function configureAndExecute() {
     if (isChecked('screenshot')) {
       output.screenshot = 'BASE64_FORMAT';
     }
+
+    // write payload
+    result.style.display = 'block';
+    document.getElementById('options').innerHTML = rawCode(JSON.parse(JSON.stringify(options)));
     document.getElementById('output').innerHTML = JSON.stringify(output);
     submit.disabled = false;
 
@@ -84,7 +92,12 @@ function configureAndExecute() {
     sDiv.style.display = screenshot ? 'block' : 'none';
     document.getElementById('screenshot-img').src = screenshot;
 
-    window.scroll(0, document.getElementById('result').offsetTop);
+    window.scroll(0, result.offsetTop - 50);
+
+    var codesTags = document.getElementsByTagName('code');
+    for (var i=0, len=codesTags.length; i<len; i++) {
+      hljs.highlightBlock(codesTags[i]);
+    }
   });
 
   me.execute();

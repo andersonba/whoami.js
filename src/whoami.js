@@ -248,9 +248,9 @@ class whoami {
     });
   }
 
-  catchDescription(done) {
-    const result = prompt(constants.descriptionDialogMessage);
-    this._addReport('description', result);
+  catchFeedback(done) {
+    const result = prompt(constants.feedbackDialogMessage);
+    this._addReport('feedback', result);
     done();
   }
 

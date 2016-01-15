@@ -1,10 +1,10 @@
 export default {
 
-  clipboardMessage: 'Copy this text using Ctrl+C and send for us. Thanks!',
-  sentSuccessMessage: 'We will contact you, soon. Thanks!',
+  clipboardMessage: 'Copy this text and send for us. Thanks!',
+  sentSuccessMessage: 'Thank you, we will contact you soon',
   sentSuccessCodeMessage: 'Thanks! Your ticket code is',
-  submitErrorMessage: 'Ops... Failed to submit data, try again or contact us.',
-  descriptionDialogMessage: 'Please describe the issue you are experiencing (optional)',
+  submitErrorMessage: 'Submit failed, try again or contact us.',
+  feedbackDialogMessage: 'Please, enter your feedback about us (optional)',
 
   shortcutModifier: 'ctrl',
   shortcutKey: '0',

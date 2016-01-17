@@ -4,6 +4,10 @@ export default {
     return Object.prototype.toString.call(arr) === '[object Array]';
   },
 
+  isFunction(fn) {
+    return fn && typeof(fn) === 'function';
+  },
+
   postRequest(url, data, done) {
     const xhr = new (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     data = JSON.stringify(data);
@@ -49,8 +53,10 @@ export default {
   },
 
   loadScript(src, done) {
+    window.__whoami_scripts = window.__whoami_scripts || [];
+
     // prevent reload
-    if (window.__whoami.loadedScripts.indexOf(src) >= 0) {
+    if (window.__whoami_scripts.indexOf(src) >= 0) {
       return done()
     }
 
@@ -65,7 +71,7 @@ export default {
     const h = document.getElementsByTagName('head')[0];
     h.appendChild(s);
 
-    window.__whoami.loadedScripts.push(src);
+    window.__whoami_scripts.push(src);
   }
 
 }

@@ -201,10 +201,10 @@ code, .hljs {
   padding-top: 5px;
 }
 
-#tasks-name {
+#function-name {
   width: 100px;
 }
-#tasks-function {
+#function-code {
   width: 70%;
 }
 

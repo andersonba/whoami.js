@@ -1,6 +1,6 @@
 ﻿var submitBtn = document.getElementById('submit');
-var taskName = document.getElementById('tasks-name');
-var taskFunction = document.getElementById('tasks-function');
+var functionName = document.getElementById('function-name');
+var functionCode = document.getElementById('function-code');
 
 // submit button
 submitBtn.addEventListener('click', function(e) {
@@ -28,18 +28,23 @@ function isChecked(name) {
   return document.querySelector('[name="'+name+'"]').checked;
 }
 
-function mountTasks() {
+function mountFunctions() {
   var output = {};
-  output[taskName.value] = eval('fn = ' + taskFunction.value);
+  output[functionName.value] = eval('fn = ' + functionCode.value);
   return output;
 }
 
 function rawCode(options) {
-  if (isChecked('tasks')) {
-    delete options.filters.tasks;
-    options.filters.tasks = {};
-    options.filters.tasks[taskName.value] = taskFunction.value;
+  if (isChecked('functions')) {
+    delete options.filters.functions;
+    options.filters.functions = {};
+    options.filters.functions[functionName.value] = functionCode.value;
   }
+  ['clipboard', 'ajax', 'cloudinary', 'slack', 'context', 'shortcut'].map(function(k) {
+    if (options[k] === false || options[k] === null || options[k] === undefined) {
+      delete options[k];
+    }
+  });
   return 'new whoami(' + JSON.stringify(options) + ');';
 }
 
@@ -51,12 +56,31 @@ function configureAndExecute() {
   result.style.display = 'none';
 
   var options = {
-    api: isChecked('api') ? '/api' : null,
     clipboard: isChecked('clipboard'),
-    customData: isChecked('customData') ? {id: 123, username: 'myuser', email: 'user@email.com'} : null,
+    ajax: isChecked('ajax') ? {
+      url: '/api',
+      callback: function(err, response) {
+        var code;
+        try {
+          code = JSON.parse(response).code;
+        } catch(err) { code = '012345' }
+
+        if (err) {
+          return alert('Submit failed, try again or contact us.');
+        }
+        alert('Thanks! Your feedback code is "' + code + '"');
+      }
+    } : null,
+    cloudinary: isChecked('cloudinary') ? {
+      name: 'CLOUD_NAME',
+      apiKey: 'API_KEY',
+      preset: 'PRESET'
+    } : null,
+    slack: isChecked('slack') ? 'YOUR_HOOK_URL' : null,
+    context: isChecked('context') ? {id: 123, username: 'myuser', email: 'user@email.com'} : null,
     shortcut: false,
     filters: {
-      tasks: isChecked('tasks') ? mountTasks() : null,
+      functions: isChecked('functions') ? mountFunctions() : null,
       basic: isChecked('basic'),
       screenshot: isChecked('screenshot'),
       exception: isChecked('exception'),

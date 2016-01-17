@@ -3,3 +3,4 @@
 npm-debug.log*
 *.log
 logs
+dist/*.js.map

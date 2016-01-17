@@ -6,6 +6,8 @@ module.exports = {
 
   entry: './src/whoami.js',
 
+  devtool: 'source-map',
+
   output: {
     path: './dist',
     filename: 'whoami.min.js',

@@ -4,20 +4,20 @@
 
 function execute(whoami, done) {
 
-  const tasks = whoami.options.filters.tasks || {};
+  const fns = whoami.options.filters.functions || {};
   let finished = 0;
   let output = {};
 
   function checkFinalize() {
-    if (finished >= Object.keys(tasks).length) {
-      whoami.store('function', output);
+    if (finished >= Object.keys(fns).length) {
+      whoami.store('functions', output);
       done();
     }
   }
 
-  for (let k in tasks) {
+  for (let k in fns) {
     // async
-    var val = tasks[k]((v) => {
+    var val = fns[k]((v) => {
       output[k] = v;
       finished++;
       checkFinalize();

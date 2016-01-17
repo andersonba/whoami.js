@@ -1,14 +1,12 @@
-﻿import { clipboardMessage } from '../constants';
-
-//
+﻿//
 // copy to clipboard
 //
 
+const message = 'Copy this text and send for us. Thanks!';
+
 function action(whoami, output) {
 
-  if (whoami.options.clipboard) {
-    prompt(clipboardMessage, JSON.stringify(output));
-  }
+  prompt(message, JSON.stringify(output));
 
 }
 

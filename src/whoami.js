@@ -1,18 +1,4 @@
-import { isFunction, isArray } from './utils';
-
-const MODULES = [
-  'basic',
-  'clipboard',
-  'console',
-  'context',
-  'cookie',
-  'exception',
-  'feedback',
-  'function',
-  'localStorage',
-  'screenshot',
-  'shortcut'
-];
+import { isArray, isFunction } from './utils';
 
 
 class whoami {
@@ -25,9 +11,9 @@ class whoami {
 
     options.filters = Object.assign({
       basic: true,
-      customData: true,
+      context: true,
       screenshot: true,
-      tasks: false
+      functions: false
     }, options.filters);
 
     this.options = options;
@@ -46,19 +32,17 @@ class whoami {
   }
 
   __init() {
-    const self = this;
-
     // load modules
     const req = require.context('./modules', true, /\.js$/);
-    MODULES.map(name => {
+    req.keys().map(function(name) {
       const mod = req(name);
 
       if (mod.init) {
-        mod.init(self);
+        mod.init(this);
       }
 
-      self.modules[name] = mod;
-    });
+      this._modules[name.replace('./', '').replace('.js', '')] = mod;
+    }.bind(this));
   }
 
   execute() {
@@ -70,11 +54,11 @@ class whoami {
 
       // execute actions
       // TODO: Promise.all
-      this.modules.map(mod => {
-        const fn = mod.action;
+      Object.keys(this._modules).map(mod => {
+        const fn = this._modules[mod].action;
 
-        if (isFunction(fn)) {
-          fn(this, this.output);
+        if (!!this.options[mod] && isFunction(fn)) {
+          fn(this, Object.assign({}, this.output));
         }
       });
 
@@ -102,7 +86,9 @@ class whoami {
 
     // TODO: Promise.all
     enabled.map(filter => {
-      const fn = this.modules[filter].execute;
+      if (!filter in this._modules) { return; }
+
+      const fn = this._modules[filter].execute;
 
       if (isFunction(fn)) {
         fn(this, () => {

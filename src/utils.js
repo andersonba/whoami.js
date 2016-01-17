@@ -17,11 +17,7 @@ export default {
 
     xhr.onload = () => {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        let code;
-        try {
-          code = (JSON.parse(xhr.responseText) || {}).code
-        } catch(err) {}
-        return done(null, code);
+        return done(null, xhr.responseText);
       }
       done(new Error(xhr.statusText));
     }

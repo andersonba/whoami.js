@@ -1,3 +1,5 @@
+import { patchFunction } from '../utils';
+
 //
 // Get all console output
 //
@@ -28,7 +30,7 @@ function init(whoami) {
     .filter(f => filters[f]);
 
   enabledFns.map(name => {
-    utils.patchFunction(window.console, name, function() {
+    patchFunction(window.console, name, function() {
       window.__whoami_console.push({
         time: +new Date(),
         message: Array.prototype.slice.call(arguments).join(' ')

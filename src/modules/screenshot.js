@@ -8,7 +8,7 @@ const SCRIPT_URL = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/htm
 
 function execute(whoami, done) {
 
-  utils.loadScript(SCRIPT_URL, () => {
+  loadScript(SCRIPT_URL, () => {
 
     window.html2canvas(document.body, {
       onrendered: canvas => {

@@ -9,6 +9,11 @@ class whoami {
       options = {};
     }
 
+    const cloudinary = options.cloudinary || {};
+    if (!(cloudinary.name && cloudinary.key && cloudinary.preset)) {
+      throw new Error('Missing Cloudinary configuration');
+    }
+
     options.filters = Object.assign({
       basic: true,
       context: true,

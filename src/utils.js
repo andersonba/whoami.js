@@ -1,4 +1,4 @@
-export default {
+const utils = {
 
   isArray(arr) {
     return Object.prototype.toString.call(arr) === '[object Array]';
@@ -22,6 +22,21 @@ export default {
       done(new Error(xhr.statusText));
     }
     xhr.send(data);
+  },
+
+  uploadImage(file, options, cb) {
+    const { name, key, preset } = options;
+    const url = `https://api.cloudinary.com/v1_1/${name}/image/upload`;
+
+    utils.postRequest(url, {
+      file: file,
+      timestamp: +new Date(),
+      upload_preset: preset,
+      api_key: key
+    }, (err, res) => {
+      if (!err) { res = JSON.parse(res); }
+      cb(err, res);
+    });
   },
 
   getCookies() {
@@ -71,3 +86,6 @@ export default {
   }
 
 }
+
+
+export default utils;

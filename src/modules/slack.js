@@ -1,4 +1,4 @@
-import { postRequest } from '../utils';
+import { uploadFile, postRequest } from '../utils';
 
 //
 // Send output to specific channel on Slack
@@ -17,13 +17,9 @@ const failedMessage = 'Submit failed to Slack, try again or contact us';
 const successMessage = 'Thank you! We contact you soon'
 
 function action(whoami, output) {
+  let hookUrl, data, callback;
   const options = whoami.options.slack;
 
-  // TODO: upload image and show as attachment in post
-  // Currently disabled, avoiding large post message (base64)
-  delete output.screenshot;
-
-  let hookUrl, data, callback;
   if (typeof(options) === 'string') {
     data = defaultOptions;
     hookUrl = options;
@@ -51,8 +47,8 @@ function action(whoami, output) {
     }())
   }];
 
-  const params = { hook_url: hookUrl, data: data};
-  postRequest(apiUrl, params, (err, response) => {
+  data = JSON.stringify(data);
+  postRequest(apiUrl, { hook_url: hookUrl, data: data }, (err, response) => {
     try {
       response = JSON.parse(response);
     } catch(err) {
@@ -61,12 +57,11 @@ function action(whoami, output) {
 
     const hasError = err && !response.sent;
 
-    if (callback) {
-      return callback(hasError)
-    }
+    if (callback) { return callback(hasError) }
 
     alert(hasError ? failedMessage : successMessage);
   });
+
 }
 
 

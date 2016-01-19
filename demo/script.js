@@ -40,7 +40,12 @@ function rawCode(options) {
     options.filters.functions = {};
     options.filters.functions[functionName.value] = functionCode.value;
   }
-  ['clipboard', 'ajax', 'cloudinary', 'slack', 'context', 'shortcut'].map(function(k) {
+  options.cloudinary = {
+    name: 'CLOUD_NAME',
+    key: 'API_KEY',
+    preset: 'UNSIGNED_PRESET'
+  };
+  ['clipboard', 'ajax', 'slack', 'context', 'shortcut'].map(function(k) {
     if (options[k] === false || options[k] === null || options[k] === undefined) {
       delete options[k];
     }
@@ -53,9 +58,15 @@ function configureAndExecute() {
   var result = document.getElementById('result');
 
   submit.disabled = true;
+  submit.innerHTML = 'CAPTURING...';
   result.style.display = 'none';
 
   var options = {
+    cloudinary: {
+      name: 'whoami',
+      key: '239596714167885',
+      preset: 'scalg9q6'
+    },
     clipboard: isChecked('clipboard'),
     ajax: isChecked('ajax') ? {
       url: '/api',
@@ -71,12 +82,7 @@ function configureAndExecute() {
         alert('Thanks! Your feedback code is "' + code + '"');
       }
     } : null,
-    cloudinary: isChecked('cloudinary') ? {
-      name: 'CLOUD_NAME',
-      apiKey: 'API_KEY',
-      preset: 'PRESET'
-    } : null,
-    slack: isChecked('slack') ? 'YOUR_HOOK_URL' : null,
+    slack: isChecked('slack') ? 'HOOK_URL' : null,
     context: isChecked('context') ? {id: 123, username: 'myuser', email: 'user@email.com'} : null,
     shortcut: false,
     filters: {
@@ -100,16 +106,12 @@ function configureAndExecute() {
   var me = new whoami(options, function(output) {
     var screenshot = output.screenshot;
 
-    // bug: to avoid crash memory
-    if (isChecked('screenshot')) {
-      output.screenshot = 'BASE64_FORMAT';
-    }
-
     // write payload
     result.style.display = 'block';
     document.getElementById('options').innerHTML = rawCode(JSON.parse(JSON.stringify(options)));
     document.getElementById('output').innerHTML = JSON.stringify(output);
     submit.disabled = false;
+    submit.innerHTML = 'CLICK HERE';
 
     // show screenshot?
     var sDiv = document.getElementById('screenshot');

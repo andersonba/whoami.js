@@ -3,8 +3,16 @@
 //
 
 function execute(whoami, done) {
+  var storage = window.localStorage || {};
+  var output = {};
 
-  whoami.store('localStorage', Object.assign({}, window.localStorage));
+  for (var attr in storage) {
+    if (storage.hasOwnProperty(attr)) {
+      output[attr] = storage[attr];
+    }
+  }
+
+  whoami.store('localStorage', output);
   done();
 
 }

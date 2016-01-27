@@ -1,6 +1,73 @@
 module.exports = function(config) {
   config.set({
 
+    // global config of your BrowserStack account
+    browserStack: {
+      username: process.env.BROWSERSTACK_USERNAME,
+      accessKey: process.env.BROWSERSTACK_ACCESS_KEY
+    },
+
+    // define browsers
+    customLaunchers: {
+      firefox_win: {
+        base: 'BrowserStack',
+        browser: 'Firefox',
+        browser_version: '43',
+        os: 'Windows',
+        os_version: '8.1'
+      },
+      chrome_win: {
+        base: 'BrowserStack',
+        browser: 'Chrome',
+        browser_version: '47',
+        os: 'Windows',
+        os_version: '8.1'
+      },
+      edge_win: {
+        base: 'BrowserStack',
+        browser: 'Edge',
+        browser_version: '12',
+        os: 'Windows',
+        os_version: '10'
+      },
+      ie11_win: {
+        base: 'BrowserStack',
+        browser: 'IE',
+        browser_version: '11',
+        os: 'Windows',
+        os_version: '8.1'
+      },
+      ie10_win: {
+        base: 'BrowserStack',
+        browser: 'IE',
+        browser_version: '10',
+        os: 'Windows',
+        os_version: '8'
+      },
+      ie9_win: {
+        base: 'BrowserStack',
+        browser: 'IE',
+        browser_version: '9',
+        os: 'Windows',
+        os_version: '7'
+      },
+      ie8_win: {
+        base: 'BrowserStack',
+        browser: 'IE',
+        browser_version: '8',
+        os: 'Windows',
+        os_version: '7'
+      },
+      safari_mac: {
+        base: 'BrowserStack',
+        browser: 'Safari',
+        browser_version: '9',
+        os: 'OS X',
+        os_version: 'El Capitan'
+      }
+    },
+
+
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
@@ -56,7 +123,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['firefox_win', 'chrome_win', 'edge_win', 'ie11_win', 'ie10_win', 'ie9_win', 'ie8_win', 'safari_mac']
 
 
     // Continuous Integration mode

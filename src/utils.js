@@ -15,6 +15,7 @@ const utils = {
     xhr.open('POST', encodeURI(url), true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
+
     xhr.onload = () => {
       if (xhr.readyState === 4 && xhr.status === 200) {
         return done(null, xhr.responseText);

@@ -9,16 +9,9 @@ class whoami {
       options = {};
     }
 
-    const cloudinary = options.cloudinary || {};
-    if (!(cloudinary.name && cloudinary.key && cloudinary.preset)) {
-      throw new Error('Missing Cloudinary configuration');
-    }
-
     options.filters = Object.assign({
       basic: true,
-      context: true,
-      screenshot: true,
-      functions: false
+      context: true
     }, options.filters);
 
     this.options = options;
@@ -91,7 +84,7 @@ class whoami {
 
     // TODO: Promise.all
     enabled.map(filter => {
-      if (!filter in this._modules) { return; }
+      if (!(filter in this._modules)) { return; }
 
       const fn = this._modules[filter].execute;
 
@@ -108,11 +101,9 @@ class whoami {
   }
 
   __showLoading() {
-    console.log('Loading: start');
   }
 
   __hideLoading() {
-    console.log('Loading: done');
   }
 
 }

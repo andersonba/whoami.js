@@ -11,6 +11,7 @@ function init(whoami) {
   window.__whoami_exceptions = [];
 
   window.onerror = function(msg, url, line, col) {
+
     window.__whoami_exceptions.push({
       time: +new Date(),
       message: msg,

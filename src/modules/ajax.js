@@ -1,4 +1,4 @@
-﻿import { postRequest } from '../utils';
+import { postRequest } from '../utils';
 
 //
 // Send data via ajax request

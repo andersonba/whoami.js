@@ -17,7 +17,7 @@ function execute(whoami, done) {
 
   for (let k in fns) {
     // async
-    var val = fns[k]((v) => {
+    const val = fns[k]((v) => {
       output[k] = v;
       finished++;
       checkFinalize();

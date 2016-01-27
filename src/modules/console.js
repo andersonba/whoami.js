@@ -33,6 +33,7 @@ function init(whoami) {
     patchFunction(window.console, name, function() {
       window.__whoami_console.push({
         time: +new Date(),
+        type: name,
         message: Array.prototype.slice.call(arguments).join(' ')
       })
     }.bind(whoami));

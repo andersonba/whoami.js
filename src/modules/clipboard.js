@@ -1,4 +1,4 @@
-﻿//
+//
 // copy to clipboard
 //
 

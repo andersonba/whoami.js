@@ -1,4 +1,4 @@
-import { uploadFile, postRequest } from '../utils';
+import { postRequest } from '../utils';
 
 //
 // Send output to specific channel on Slack

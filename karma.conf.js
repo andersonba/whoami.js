@@ -1,71 +1,84 @@
 module.exports = function(config) {
+
+  var defaultLauncher = 'Chrome';
+
+  var customLaunchers = {
+    firefox_win: {
+      base: 'BrowserStack',
+      browser: 'firefox',
+      browser_version: '43.0',
+      os: 'Windows',
+      os_version: '8.1'
+    },
+    chrome_win: {
+      base: 'BrowserStack',
+      browser: 'chrome',
+      browser_version: '47.0',
+      os: 'Windows',
+      os_version: '8.1'
+    },
+    edge_win: {
+      base: 'BrowserStack',
+      browser: 'edge',
+      browser_version: '12.0',
+      os: 'Windows',
+      os_version: '10'
+    },
+    ie11_win: {
+      base: 'BrowserStack',
+      browser: 'ie',
+      browser_version: '11.0',
+      os: 'Windows',
+      os_version: '8.1'
+    },
+    ie10_win: {
+      base: 'BrowserStack',
+      browser: 'ie',
+      browser_version: '10.0',
+      os: 'Windows',
+      os_version: '8'
+    },
+    ie9_win: {
+      base: 'BrowserStack',
+      browser: 'ie',
+      browser_version: '9.0',
+      os: 'Windows',
+      os_version: '7'
+    },
+    ie8_win: {
+      base: 'BrowserStack',
+      browser: 'ie',
+      browser_version: '8.0',
+      os: 'Windows',
+      os_version: '7'
+    },
+    safari_mac: {
+      base: 'BrowserStack',
+      browser: 'safari',
+      browser_version: '9.0',
+      os: 'OS X',
+      os_version: 'El Capitan'
+    }
+  };
+
   config.set({
 
-    // global config of your BrowserStack account
+    browsers: function(){
+      if (!process.env.CI) { return [defaultLauncher]; }
+      return Object.keys(customLaunchers);
+    }(),
+
+
     browserStack: {
-      username: process.env.BROWSERSTACK_USERNAME,
-      accessKey: process.env.BROWSERSTACK_ACCESS_KEY
+      project: 'whoami.js',
+      build: process.env.TRAVIS_BUILD_NUMBER || 'dev'
     },
 
-    // define browsers
-    customLaunchers: {
-      firefox_win: {
-        base: 'BrowserStack',
-        browser: 'Firefox',
-        browser_version: '43',
-        os: 'Windows',
-        os_version: '8.1'
-      },
-      chrome_win: {
-        base: 'BrowserStack',
-        browser: 'Chrome',
-        browser_version: '47',
-        os: 'Windows',
-        os_version: '8.1'
-      },
-      edge_win: {
-        base: 'BrowserStack',
-        browser: 'Edge',
-        browser_version: '12',
-        os: 'Windows',
-        os_version: '10'
-      },
-      ie11_win: {
-        base: 'BrowserStack',
-        browser: 'IE',
-        browser_version: '11',
-        os: 'Windows',
-        os_version: '8.1'
-      },
-      ie10_win: {
-        base: 'BrowserStack',
-        browser: 'IE',
-        browser_version: '10',
-        os: 'Windows',
-        os_version: '8'
-      },
-      ie9_win: {
-        base: 'BrowserStack',
-        browser: 'IE',
-        browser_version: '9',
-        os: 'Windows',
-        os_version: '7'
-      },
-      ie8_win: {
-        base: 'BrowserStack',
-        browser: 'IE',
-        browser_version: '8',
-        os: 'Windows',
-        os_version: '7'
-      },
-      safari_mac: {
-        base: 'BrowserStack',
-        browser: 'Safari',
-        browser_version: '9',
-        os: 'OS X',
-        os_version: 'El Capitan'
-      }
-    },
+
+    customLaunchers: customLaunchers,
+
+
+    browserNoActivityTimeout: 60000,
 
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -74,15 +87,13 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha', 'requirejs', 'chai', 'sinon', 'jquery-2.1.0'],
+    frameworks: ['mocha', 'chai', 'sinon'],
 
 
     // list of files / patterns to load in the browser
     files: [
       'dist/whoami.min.js',
-      'test/start.js',
-      {pattern: 'test/**/*.js', included: false},
-      {pattern: 'dist/*.js', included: false}
+      'test/**/*.spec.js'
     ],
 
 
@@ -95,6 +106,13 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'test/**/*.js': ['babel']
+    },
+
+    babelPreprocessor: {
+      options: {
+        presets: ['es2015'],
+        sourceMap: 'inline'
+      }
     },
 
 
@@ -118,20 +136,15 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
-
-
-    // start these browsers
-    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['firefox_win', 'chrome_win', 'edge_win', 'ie11_win', 'ie10_win', 'ie9_win', 'ie8_win', 'safari_mac']
+    autoWatch: !process.env.CI,
 
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false,
+    singleRun: process.env.CI,
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: Infinity
+    // concurrency: 2
   })
 }

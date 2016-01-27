@@ -2,9 +2,10 @@
 
 A simple and lightweight browser detection and logger library.
 
-[Demo](http://andersonba.github.io/whoami.js)
+[![Build Status](https://travis-ci.org/andersonba/whoami.js.svg?branch=master)](https://travis-ci.org/andersonba/whoami.js)
 
-[![wercker status](https://app.wercker.com/status/d9e6c9d4b46223acc70b0ed86d594ba8/m "wercker status")](https://app.wercker.com/project/bykey/d9e6c9d4b46223acc70b0ed86d594ba8)
+See [demo page](http://andersonba.github.io/whoami.js)
+
 
 
 ## Thank You

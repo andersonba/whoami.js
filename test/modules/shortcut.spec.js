@@ -1,20 +1,28 @@
-define(['utils'], (utils) => {
+describe('shortcut', () => {
 
-  describe('shortcut', () => {
+  function simulateKeyEvent(el, method, char, modifiers) {
+    const ev = document.createEvent('Events');
+    const keyCode = char.charCodeAt(0);
 
-    it('init', () => {
-      let isExecuted;
+    ev.initEvent(method, true, true);
+    ev.keyCode = keyCode;
+    ev.which = keyCode;
+    (modifiers || []).map(m => { ev[`${m}Key`] = true; });
 
-      new whoami({
-        shortcut: true,
-        filters: []
-      }, () => { isExecuted = true; });
+    el.dispatchEvent(ev);
+  }
 
-      utils.simulateKeyEvent(document, 'keydown', '0', ['ctrl']);
+  it('init', () => {
+    let isExecuted;
 
-      expect(!!isExecuted).to.be.true;
-    });
+    new whoami({
+      shortcut: true,
+      filters: []
+    }, () => { isExecuted = true; });
 
+    simulateKeyEvent(document, 'keydown', '0', ['ctrl']);
+
+    expect(!!isExecuted).to.be.true;
   });
 
 });

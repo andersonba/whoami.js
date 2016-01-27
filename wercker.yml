@@ -1,0 +1,16 @@
+﻿box: node
+build:
+  steps:
+    - npm-install
+
+    - script:
+        name: eslint
+        code: npm run lint
+
+    - npm-test
+
+    - script:
+        name: echo nodejs information
+        code: |
+          echo "node version $(node -v) running"
+          echo "npm version $(npm -v) running"

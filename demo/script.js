@@ -96,7 +96,6 @@ function configureAndExecute() {
       console: isChecked('console') ? {
         log: isChecked('console.log'),
         error: isChecked('console.error'),
-        debug: isChecked('console.debug'),
         info: isChecked('console.info'),
         warn: isChecked('console.warn'),
       } : false

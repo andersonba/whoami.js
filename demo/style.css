@@ -210,6 +210,17 @@ code, .hljs {
 
 .hide { display: none; }
 
+
+.browserstack {
+  margin-top: 40px;
+  font-size: 90%;
+}
+.browserstack-logo {
+  height: 25px;
+  vertical-align: bottom;
+  padding: 0 5px;
+}
+
 .github-corner:hover .octo-arm { animation:octocat-wave 560ms ease-in-out }
 @keyframes octocat-wave { 0%,100%{transform:rotate(0)} 20%,60% {transform:rotate(-25deg)} 40%,80% {transform:rotate(10deg)} }
 @media (max-width:500px){ .github-corner:hover .octo-arm{animation:none} .github-corner .octo-arm {animation:octocat-wave 560ms ease-in-out} }

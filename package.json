@@ -5,7 +5,8 @@
   "main": "dist/whoami.min.js",
   "scripts": {
     "start": "webpack --watch",
-    "lint": "eslint src"
+    "lint": "eslint src test",
+    "test": "./node_modules/karma/bin/karma start"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,16 @@
     "browser-sync": "^2.11.0",
     "browser-sync-webpack-plugin": "^1.0.1",
     "eslint": "^1.10.3",
+    "karma": "^0.13.19",
+    "karma-babel-preprocessor": "^6.0.1",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-jquery": "^0.1.0",
+    "karma-mocha": "^0.2.1",
+    "karma-requirejs": "^0.2.3",
+    "karma-sinon": "^1.0.4",
+    "requirejs": "^2.1.22",
+    "sinon": "^1.17.2",
     "webpack": "^1.12.11"
   },
   "eslintConfig": {

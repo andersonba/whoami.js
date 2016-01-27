@@ -45,13 +45,6 @@ module.exports = function(config) {
       os: 'Windows',
       os_version: '7'
     },
-    ie8_win: {
-      base: 'BrowserStack',
-      browser: 'ie',
-      browser_version: '8.0',
-      os: 'Windows',
-      os_version: '7'
-    },
     safari_mac: {
       base: 'BrowserStack',
       browser: 'safari',
@@ -78,7 +71,10 @@ module.exports = function(config) {
     customLaunchers: customLaunchers,
 
 
-    browserNoActivityTimeout: 80000,
+    browserNoActivityTimeout: 60000,
+
+
+    captureTimeout: 90000,
 
 
     // base path that will be used to resolve all patterns (eg. files, exclude)

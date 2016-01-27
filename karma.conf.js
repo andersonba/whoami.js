@@ -38,19 +38,33 @@ module.exports = function(config) {
       os: 'Windows',
       os_version: '8'
     },
-    ie9_win: {
-      base: 'BrowserStack',
-      browser: 'ie',
-      browser_version: '9.0',
-      os: 'Windows',
-      os_version: '7'
-    },
+    // ie9_win: {
+    //   base: 'BrowserStack',
+    //   browser: 'ie',
+    //   browser_version: '9.0',
+    //   os: 'Windows',
+    //   os_version: '7'
+    // },
     safari_mac: {
       base: 'BrowserStack',
       browser: 'safari',
       browser_version: '9.0',
       os: 'OS X',
       os_version: 'El Capitan'
+    },
+    firefox_mac: {
+      base: 'BrowserStack',
+      browser: 'firefox',
+      browser_version: '38.0',
+      os: 'OS X',
+      os_version: 'Yosemite'
+    },
+    chrome_mac: {
+      base: 'BrowserStack',
+      browser: 'chrome',
+      browser_version: '44.0',
+      os: 'OS X',
+      os_version: 'Mavericks'
     }
   };
 
@@ -71,10 +85,7 @@ module.exports = function(config) {
     customLaunchers: customLaunchers,
 
 
-    browserNoActivityTimeout: 60000,
-
-
-    captureTimeout: 90000,
+    browserNoActivityTimeout: 70000,
 
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -141,6 +152,6 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    // concurrency: 2
+    concurrency: 2
   })
 }

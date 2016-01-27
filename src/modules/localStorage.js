@@ -3,10 +3,10 @@
 //
 
 function execute(whoami, done) {
-  var storage = window.localStorage || {};
-  var output = {};
+  const storage = window.localStorage || {};
+  let output = {};
 
-  for (var attr in storage) {
+  for (const attr in storage) {
     if (storage.hasOwnProperty(attr)) {
       output[attr] = storage[attr];
     }

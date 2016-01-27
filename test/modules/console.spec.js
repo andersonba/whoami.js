@@ -44,10 +44,6 @@ describe('console', () => {
     assertMethod('error');
   });
 
-  it('.debug', () => {
-    assertMethod('debug');
-  });
-
   it('.info', () => {
     assertMethod('info');
   });

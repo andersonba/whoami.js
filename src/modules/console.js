@@ -7,7 +7,6 @@ import { patchFunction } from '../utils';
 const defaultConsoleFilters = {
   log: true,
   error: true,
-  debug: true,
   info: true,
   warn: true
 };

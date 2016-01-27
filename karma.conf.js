@@ -78,7 +78,7 @@ module.exports = function(config) {
     customLaunchers: customLaunchers,
 
 
-    browserNoActivityTimeout: 60000,
+    browserNoActivityTimeout: 80000,
 
 
     // base path that will be used to resolve all patterns (eg. files, exclude)

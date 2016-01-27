@@ -4,8 +4,6 @@ describe('screenshot', () => {
 
   before(() => {
     server = sinon.fakeServer.create();
-    server.autoRespond = true;
-    server.respondImmediately = true;
 
     // mock loadScript and html2canvas
     window.__whoami_scripts = ['https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js'];
@@ -23,7 +21,7 @@ describe('screenshot', () => {
       new whoami({ filters: { screenshot: true } });
     }
 
-    expect(fn).to.throw(/Missing Cloudinary/);
+    expect(fn).to.throws(/Missing Cloudinary/);
   });
 
   it('uploading screenshot to cloudinary', (done) => {
@@ -37,6 +35,8 @@ describe('screenshot', () => {
       cloudinary: { name: 'fake', key: 'fake', preset: 'fake' },
       filters: { screenshot: true }
     }, callback).execute();
+
+    server.respond();
 
     function callback(output) {
       expect(output.screenshot).to.equal(fakeUrl);

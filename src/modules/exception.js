@@ -19,6 +19,8 @@ function init(whoami) {
       line: line,
       col: col
     });
+
+    return false;
   }
 
 }

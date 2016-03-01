@@ -1,10 +1,10 @@
-describe('functions', () => {
+describe('functions', (done) => {
 
-  it('execute', done => {
+  it('execute', () => {
 
     new whoami({ filters: { functions: {
       sync: function() { return 1 + 1; },
-      async: function(done) { setTimeout(function() { done(2 + 2); }, 1000); }
+      async: function(d) { setTimeout(function() { d(2 + 2); }, 1000); }
     } } }, callback).execute();
 
     function callback(output) {

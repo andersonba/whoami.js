@@ -78,7 +78,7 @@ module.exports = function(config) {
 
     browserStack: {
       project: 'whoami.js',
-      build: process.env.TRAVIS_BUILD_NUMBER || 'dev'
+      build: process.env.CI_BUILD_NUMBER || 'dev'
     },
 
 

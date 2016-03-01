@@ -24,14 +24,13 @@ describe('console', () => {
     })
 
     me.execute();
-
     const output = me.output.console;
 
     messages.map((m, i) => {
       expect(output[i]).to.deep.equal({
         time: time,
         type: method,
-        message: m
+        message: `"${m}"`
       });
     });
   }
@@ -50,6 +49,20 @@ describe('console', () => {
 
   it('.warn', () => {
     assertMethod('warn');
+  });
+
+  it('test deep object', () => {
+    const obj = {
+      fn: function(e) { return e },
+      text: 'text',
+      value: 321
+    }
+    console.log('string', obj);
+
+    me.execute();
+    const output = me.output.console;
+
+    expect(output[0].message).to.equal(`"string" {fn: function(e) { return e; }, text: "text", value: 321}`);
   });
 
 });

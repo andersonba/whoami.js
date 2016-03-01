@@ -8,6 +8,29 @@ const utils = {
     return fn && typeof(fn) === 'function';
   },
 
+  objToString(obj, ndeep) {
+    if (obj == null) { return String(obj); }
+
+    switch (typeof obj) {
+      case "string": return `"${obj}"`;
+
+      case "function": return obj.toString()
+        .slice(`function ${obj.name}`.length)
+        .replace(/^/, 'function')
+        .replace(/(\r\n|\n|\r)/gm, '')
+        .replace(/\s+/g,' ');
+
+      case "object":
+        const indent = Array(ndeep || 1).join(' ');
+        const objIsArray = utils.isArray(obj);
+        return '{['[+objIsArray] + Object.keys(obj).map(function(key){
+             return indent + key + ': ' + utils.objToString(obj[key], (ndeep || 1) + 1);
+           }).join(', ') + indent + '}]'[+objIsArray];
+
+      default: return obj.toString();
+    }
+  },
+
   postRequest(url, data, done) {
     const xhr = new (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     data = JSON.stringify(data);

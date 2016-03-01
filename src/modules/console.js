@@ -1,4 +1,4 @@
-import { patchFunction } from '../utils';
+import { objToString, patchFunction } from '../utils';
 
 //
 // Get all console output
@@ -33,7 +33,7 @@ function init(whoami) {
       window.__whoami_console.push({
         time: +new Date(),
         type: name,
-        message: Array.prototype.slice.call(arguments).join(' ')
+        message: Array.prototype.slice.call(arguments).map(objToString).join(' ')
       })
     }.bind(whoami));
   });

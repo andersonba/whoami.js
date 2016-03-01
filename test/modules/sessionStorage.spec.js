@@ -5,7 +5,7 @@ describe('sessionStorage', () => {
   });
 
   it('execute', () => {
-    const me = new whoami({ filters: { sessionStorage: true } });
+    const me = new whoami({ sessionStorage: true });
     const value = `value-${Math.random()}`;
 
     window.sessionStorage.setItem('whoamiTesting', value);

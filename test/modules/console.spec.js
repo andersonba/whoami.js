@@ -2,7 +2,7 @@
 
 describe('console', () => {
 
-  const me = new whoami({ filters: { console: true } });
+  const me = new whoami({ console: true });
   const time = +new Date();
 
   before(() => {
@@ -10,7 +10,7 @@ describe('console', () => {
   });
 
   beforeEach(() => {
-    window.__whoami_console = [];
+    me.__output_console = [];
   });
 
   function assertMethod(method) {

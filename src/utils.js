@@ -32,6 +32,8 @@ const utils = {
   },
 
   postRequest(url, data, done) {
+    done = done || function() {};
+
     const xhr = new (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     data = JSON.stringify(data);
 

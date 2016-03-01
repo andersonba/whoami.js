@@ -4,7 +4,7 @@
 
 function execute(whoami, done) {
 
-  const fns = whoami.options.filters.functions || {};
+  const fns = whoami.options.functions || {};
   let finished = 0;
   let output = {};
 

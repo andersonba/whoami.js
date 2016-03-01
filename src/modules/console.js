@@ -13,13 +13,9 @@ const defaultConsoleFilters = {
 
 function init(whoami) {
 
-  if (whoami.filters.indexOf('console') < 0) {
-    return;
-  }
+  whoami.__output_console = [];
 
-  window.__whoami_console = [];
-
-  let filters = whoami.options.filters.console;
+  let filters = whoami.options.console;
   if (filters !== false) {
     filters = typeof(filters) === 'object' ? filters : {};
     filters = Object.assign(defaultConsoleFilters, filters);
@@ -30,7 +26,7 @@ function init(whoami) {
 
   enabledFns.map(name => {
     patchFunction(window.console, name, function() {
-      window.__whoami_console.push({
+      whoami.__output_console.push({
         time: +new Date(),
         type: name,
         message: Array.prototype.slice.call(arguments).map(objToString).join(' ')
@@ -42,7 +38,7 @@ function init(whoami) {
 
 function execute(whoami, done) {
 
-  whoami.store('console', window.__whoami_console);
+  whoami.store('console', whoami.__output_console);
   done();
 
 }

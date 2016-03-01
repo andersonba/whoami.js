@@ -5,7 +5,7 @@ describe('localStorage', () => {
   });
 
   it('execute', () => {
-    const me = new whoami({ filters: { localStorage: true } });
+    const me = new whoami({ localStorage: true });
     const value = `value-${Math.random()}`;
 
     window.localStorage.setItem('whoamiTesting', value);

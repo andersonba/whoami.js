@@ -1,11 +1,8 @@
-describe('exception', () => {
-
-  beforeEach(() => {
-    window.__whoami_exception = [];
-  });
+describe('error', () => {
 
   it('execute', () => {
-    const me = new whoami({ filters: { exception: true } });
+    const me = new whoami({ error: true });
+
     const time = +new Date();
     const url = window.location.toString();
     const line = 2;
@@ -14,7 +11,7 @@ describe('exception', () => {
     sinon.useFakeTimers(time);
 
     const messages = [
-      `error 1`,
+      'error 1',
       `error 2 - ${Math.random()}`
     ];
 
@@ -26,7 +23,7 @@ describe('exception', () => {
     me.execute();
 
     messages.map((m, i) => {
-      expect(me.output.exception[i]).to.deep.equal({
+      expect(me.output.error[i]).to.deep.equal({
         time: time,
         message: new Error(m).toString(),
         url: url,

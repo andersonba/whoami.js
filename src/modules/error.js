@@ -1,18 +1,14 @@
 //
-// Catch all exceptions
+// Catch all errors
 //
 
 function init(whoami) {
 
-  if (whoami.filters.indexOf('exception') < 0) {
-    return;
-  }
-
-  window.__whoami_exceptions = [];
+  whoami.__output_error = [];
 
   window.onerror = function(msg, url, line, col) {
 
-    window.__whoami_exceptions.push({
+    whoami.__output_error.push({
       time: +new Date(),
       message: msg,
       url: url,
@@ -27,7 +23,7 @@ function init(whoami) {
 
 function execute(whoami, done) {
 
-  whoami.store('exception', window.__whoami_exceptions);
+  whoami.store('error', whoami.__output_error);
   done();
 
 }

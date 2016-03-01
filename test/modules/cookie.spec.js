@@ -1,7 +1,7 @@
 describe('cookie', () => {
 
   it('execute', () => {
-    const me = new whoami({ filters: { cookie: true } });
+    const me = new whoami({ cookie: true });
     const random = `whoami-${Math.random()}`;
 
     document.cookie = `whoami_testing=${random}`;

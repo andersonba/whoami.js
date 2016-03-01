@@ -18,7 +18,7 @@ describe('screenshot', () => {
 
   it('throws error', () => {
     function fn() {
-      new whoami({ filters: { screenshot: true } });
+      new whoami({ screenshot: true });
     }
 
     expect(fn).to.throws(/Missing Cloudinary/);
@@ -32,8 +32,9 @@ describe('screenshot', () => {
       `{"url": "${fakeUrl}"}`])
 
     new whoami({
-      cloudinary: { name: 'fake', key: 'fake', preset: 'fake' },
-      filters: { screenshot: true }
+      screenshot: {
+        cloudinary: { name: 'fake', key: 'fake', preset: 'fake' }
+      }
     }, callback).execute();
 
     server.respond();

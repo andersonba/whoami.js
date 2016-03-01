@@ -1,29 +1,33 @@
-import { isArray, isFunction } from './utils';
+import { postRequest, isArray, isFunction } from './utils';
 
 
 class whoami {
 
-  constructor(options = {}, callback) {
-    if (typeof(options) === 'function') {
+  constructor(apiUrl, options, callback) {
+    if (typeof(apiUrl) === 'object') {
+      callback = options;
+      options = apiUrl;
+      apiUrl = undefined;
+    } else if (typeof(options) === 'function') {
       callback = options;
       options = {};
     }
 
-    options.filters = Object.assign({
-      basic: true,
-      context: true
-    }, options.filters);
+    options = Object.assign({
+      basic: true
+    }, options);
 
     this.options = options;
     this.output = {};
-    this.filters = Object.keys(this.options.filters).filter(f => this.options.filters[f]);
-    this._callback = callback;
+    this.filters = Object.keys(this.options).filter(k => this.options[k]);
     this._modules = {};
+    this._apiUrl = apiUrl;
+    this._callback = callback;
 
     // binds
     this.execute = this.execute.bind(this);
     this.__init = this.__init.bind(this);
-    this.__runModules = this.__runModules.bind(this);
+    this.__executeModules = this.__executeModules.bind(this);
 
     // start
     this.__init();
@@ -32,40 +36,44 @@ class whoami {
   __init() {
     // load modules
     const req = require.context('./modules', true, /\.js$/);
-    req.keys().map(function(name) {
-      const mod = req(name);
+    req.keys().map(function(path) {
+      const mod = req(path);
+      const name = path.replace('./', '').replace('.js', '');
 
-      if (mod.init) {
+      if (mod.init && this.filters.indexOf(name) >= 0) {
         mod.init(this);
       }
 
-      this._modules[name.replace('./', '').replace('.js', '')] = mod;
+      this._modules[name] = mod;
     }.bind(this));
   }
 
   execute() {
     this.output = {};
 
-    this.__showLoading();
+    this.__executeModules(() => {
 
-    this.__runModules(() => {
+      // post to whoami.js server
+      if (this._apiUrl) {
 
-      // execute actions
-      // TODO: Promise.all
-      Object.keys(this._modules).map(mod => {
-        const fn = this._modules[mod].action;
+        postRequest(this._apiUrl, this.output, function(err, data) {
+          try {
+            data = JSON.parse(data || '{}');
+          } catch(e) {}
 
-        if (!!this.options[mod] && isFunction(fn)) {
-          fn(this, Object.assign({}, this.output));
-        }
-      });
+          if (typeof this._callback === 'function') {
+            this._callback(err, data)
+          }
+        }.bind(this));
+
+        return;
+      }
 
       // pass to callback
       if (this._callback) {
         this._callback(this.output);
       }
 
-      this.__hideLoading();
     });
   }
 
@@ -78,7 +86,7 @@ class whoami {
     this.output[name] = existent || value;
   }
 
-  __runModules(done) {
+  __executeModules(done) {
     let finished = 0;
     const enabled = this.filters;
 
@@ -98,12 +106,6 @@ class whoami {
         });
       }
     });
-  }
-
-  __showLoading() {
-  }
-
-  __hideLoading() {
   }
 
 }

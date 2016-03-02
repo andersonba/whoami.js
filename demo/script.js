@@ -92,6 +92,7 @@ function configureAndExecute() {
       exception: isChecked('exception'),
       cookie: isChecked('cookie'),
       localStorage: isChecked('localStorage'),
+      sessionStorage: isChecked('sessionStorage'),
       feedback: isChecked('feedback'),
       console: isChecked('console') ? {
         log: isChecked('console.log'),

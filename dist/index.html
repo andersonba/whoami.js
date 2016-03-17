@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>whoami.js testing</title>
+    <script src="whoami.min.js"></script>
+    <script>
+      window.me = new whoami('/api?to=slack', {
+        basic: true,
+        console: true,
+        context: { userId: 321 },
+        cookie: true,
+        error: true,
+        functions: {
+          test: function() { return 1 + 3; },
+          myFeedback: function() {
+            return prompt('Enter your feedback :)');
+          }
+        },
+        localStorage: true,
+        screenshot: true,
+        sessionStorage: true
+      }, function(err, data) {
+        alert(err ? 'Failure :(' : 'Success! :)');
+        console.log(err, data);
+      });
+    </script>
+  </head>
+  <body>
+    <button onClick="window.me.execute();">Capture!</button>
+  </body>
+</html>

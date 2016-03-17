@@ -15,7 +15,7 @@ describe('shortcut', (done) => {
   it('init', () => {
     let isExecuted;
 
-    const asd = new whoami({
+    new whoami({
       shortcut: true
     }, () => { isExecuted = true; });
 

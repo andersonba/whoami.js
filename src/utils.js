@@ -12,22 +12,22 @@ const utils = {
     if (obj == null) { return String(obj); }
 
     switch (typeof obj) {
-      case "string": return `"${obj}"`;
+    case 'string': return `"${obj}"`;
 
-      case "function": return obj.toString()
-        .slice(`function ${obj.name}`.length)
-        .replace(/^/, 'function')
-        .replace(/(\r\n|\n|\r)/gm, '')
-        .replace(/\s+/g,' ');
+    case 'function': return obj.toString()
+      .slice(`function ${obj.name}`.length)
+      .replace(/^/, 'function')
+      .replace(/(\r\n|\n|\r)/gm, '')
+      .replace(/\s+/g,' ');
 
-      case "object":
-        const indent = Array(ndeep || 1).join(' ');
-        const objIsArray = utils.isArray(obj);
-        return '{['[+objIsArray] + Object.keys(obj).map(function(key){
-             return indent + key + ': ' + utils.objToString(obj[key], (ndeep || 1) + 1);
-           }).join(', ') + indent + '}]'[+objIsArray];
+    case 'object':
+      const indent = Array(ndeep || 1).join(' ');
+      const objIsArray = utils.isArray(obj);
+      return '{['[+objIsArray] + Object.keys(obj).map(function(key) {
+        return indent + key + ': ' + utils.objToString(obj[key], (ndeep || 1) + 1);
+      }).join(', ') + indent + '}]'[+objIsArray];
 
-      default: return obj.toString();
+    default: return obj.toString();
     }
   },
 
@@ -39,7 +39,6 @@ const utils = {
 
     xhr.open('POST', encodeURI(url), true);
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-
 
     xhr.onload = () => {
       if (xhr.readyState === 4 && xhr.status === 200) {

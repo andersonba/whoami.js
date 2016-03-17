@@ -23,7 +23,7 @@ describe('error', () => {
     me.execute();
 
     messages.map((m, i) => {
-      expect(me.output.error[i]).to.deep.equal({
+      expect(me.store.get('error')[i]).to.deep.equal({
         time: time,
         message: new Error(m).toString(),
         url: url,

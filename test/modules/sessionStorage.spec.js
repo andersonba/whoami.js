@@ -11,7 +11,7 @@ describe('sessionStorage', () => {
     window.sessionStorage.setItem('whoamiTesting', value);
     me.execute();
 
-    expect(me.output.sessionStorage).to.deep.equal({
+    expect(me.store.get('sessionStorage')).to.deep.equal({
       'whoamiTesting': value
     });
   });

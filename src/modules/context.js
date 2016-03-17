@@ -5,7 +5,7 @@
 function execute(whoami, done) {
 
   if (whoami.options.context) {
-    whoami.store('context', whoami.options.context);
+    whoami.store.set('context', whoami.options.context);
   }
   done();
 

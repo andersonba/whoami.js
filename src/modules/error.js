@@ -23,7 +23,7 @@ function init(whoami) {
 
 function execute(whoami, done) {
 
-  whoami.store('error', whoami.__output_error);
+  whoami.store.set('error', whoami.__output_error);
   done();
 
 }

@@ -38,7 +38,7 @@ function init(whoami) {
 
 function execute(whoami, done) {
 
-  whoami.store('console', whoami.__output_console);
+  whoami.store.set('console', whoami.__output_console);
   done();
 
 }

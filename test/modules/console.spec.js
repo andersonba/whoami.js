@@ -24,7 +24,7 @@ describe('console', () => {
     })
 
     me.execute();
-    const output = me.output.console;
+    const output = me.store.get('console');
 
     messages.map((m, i) => {
       expect(output[i]).to.deep.equal({
@@ -60,7 +60,7 @@ describe('console', () => {
     console.log('string', obj);
 
     me.execute();
-    const output = me.output.console;
+    const output = me.store.get('console');
 
     expect(output[0].message).to.equal(`"string" {fn: function(e) { return e; }, text: "text", value: 321}`);
   });

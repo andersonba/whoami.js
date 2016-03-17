@@ -4,7 +4,7 @@
 
 function execute(whoami, done) {
 
-  whoami.store('sessionStorage', JSON.parse(JSON.stringify(window.sessionStorage)));
+  whoami.store.set('sessionStorage', JSON.parse(JSON.stringify(window.sessionStorage)));
   done();
 
 }

@@ -7,7 +7,7 @@ describe('cookie', () => {
     document.cookie = `whoami_testing=${random}`;
     me.execute();
 
-    expect(me.output.cookie).to.deep.equal({
+    expect(me.store.get('cookie')).to.deep.equal({
       'whoami_testing': random
     });
   });

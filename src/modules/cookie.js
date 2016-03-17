@@ -6,7 +6,7 @@ import { getCookies } from '../utils';
 
 function execute(whoami, done) {
 
-  whoami.store('cookie', getCookies());
+  whoami.store.set('cookie', getCookies());
   done();
 
 }

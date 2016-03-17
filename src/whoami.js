@@ -1,5 +1,5 @@
-import { postRequest, isArray, isFunction } from './utils';
-
+import { postRequest, isFunction } from './utils';
+import store from './store';
 
 class whoami {
 
@@ -18,11 +18,13 @@ class whoami {
     }, options);
 
     this.options = options;
-    this.output = {};
     this.filters = Object.keys(this.options).filter(k => this.options[k]);
     this._modules = {};
     this._apiUrl = apiUrl;
     this._callback = callback;
+
+    // Storage Manager
+    this.store = store;
 
     // binds
     this.execute = this.execute.bind(this);
@@ -49,17 +51,20 @@ class whoami {
   }
 
   execute() {
-    this.output = {};
+    this.store.clear();
 
     this.__executeModules(() => {
+      const output = this.store.get();
 
       // post to whoami.js server
       if (this._apiUrl) {
 
-        postRequest(this._apiUrl, this.output, function(err, data) {
+        postRequest(this._apiUrl, output, function(err, data) {
           try {
             data = JSON.parse(data || '{}');
-          } catch(e) {}
+          } catch(e) {
+            throw new Error('Failed to parse whoami response', data);
+          }
 
           if (typeof this._callback === 'function') {
             this._callback(err, data)
@@ -71,19 +76,10 @@ class whoami {
 
       // pass to callback
       if (this._callback) {
-        this._callback(this.output);
+        this._callback(output);
       }
 
     });
-  }
-
-  store(name, value) {
-    let existent = this.output[name];
-    if (existent) {
-      existent = isArray(existent) ? existent : [existent];
-      existent.push(value);
-    }
-    this.output[name] = existent || value;
   }
 
   __executeModules(done) {

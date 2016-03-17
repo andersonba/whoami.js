@@ -10,7 +10,7 @@ function execute(whoami, done) {
 
   function checkFinalize() {
     if (finished >= Object.keys(fns).length) {
-      whoami.store('functions', output);
+      whoami.store.set('functions', output);
       done();
     }
   }

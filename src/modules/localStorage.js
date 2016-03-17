@@ -7,12 +7,12 @@ function execute(whoami, done) {
   let output = {};
 
   for (const attr in storage) {
-    if (storage.hasOwnProperty(attr)) {
+    if (storage.hasOwnProperty(attr) && attr.indexOf(whoami.store.prefix) < 0) {
       output[attr] = storage[attr];
     }
   }
 
-  whoami.store('localStorage', output);
+  whoami.store.set('localStorage', output);
   done();
 
 }

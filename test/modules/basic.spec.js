@@ -9,7 +9,7 @@ describe('basic', () => {
     sinon.useFakeTimers(time);
     me.execute();
 
-    const output = me.output.basic;
+    const output = me.store.get('basic');
 
     expect(output.title).to.equal('whoami.js title');
     expect(output.url).to.equal(window.location.href);

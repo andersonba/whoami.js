@@ -10,7 +10,7 @@ describe('context', () => {
 
     me.execute();
 
-    expect(me.output.context).to.deep.equal(context);
+    expect(me.store.get('context')).to.deep.equal(context);
   });
 
 });

@@ -4,7 +4,7 @@
 
 function execute(whoami, done) {
 
-  whoami.store('basic', {
+  whoami.store.set('basic', {
     title: document.title,
     url: window.location.href,
     origin: window.location.origin,

@@ -4,6 +4,7 @@ var Promise = require('bluebird');
 var express = require('express');
 var bodyParser = require('body-parser')
 var useragent = require('useragent');
+var cors = require('cors');
 var Slack = require('node-slack');
 var cloudinary = require('cloudinary');
 
@@ -24,9 +25,10 @@ cloudinary.config({
 });
 
 var app = express();
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.post('/api', function(req, res) {
   var output = req.body;
@@ -58,7 +60,6 @@ app.post('/api', function(req, res) {
         text: 'New ticket received',
         channel: process.env.SLACK_CHANNEL,
         username: 'whoami.js',
-        icon_url: 'http://d23ks75jpqx8rv.cloudfront.net/images/logo/meta.png',
         attachments: [{
           title: 'Payload',
           color: 'good',
@@ -84,11 +85,6 @@ app.post('/api', function(req, res) {
 
   res.json({ success: 1 });
 });
-
-// enable test page
-if (process.env.NODE_ENV !== 'production') {
-  app.use(express.static('dist'));
-}
 
 app.listen(port, function() {
   console.log('whoami.js server listening in port', port);

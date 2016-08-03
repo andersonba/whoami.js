@@ -5,6 +5,7 @@
   "main": "dist/whoami.min.js",
   "scripts": {
     "start": "webpack --watch",
+    "build": "webpack",
     "lint": "eslint src test server",
     "spec": "./node_modules/karma/bin/karma start",
     "test": "npm run lint && npm run spec"

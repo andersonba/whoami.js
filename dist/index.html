@@ -6,7 +6,7 @@
     <title>whoami.js testing</title>
     <script src="whoami.min.js"></script>
     <script>
-      window.me = new whoami('/api?to=slack', {
+      var options = {
         basic: true,
         console: true,
         context: { userId: 321 },
@@ -21,13 +21,22 @@
         localStorage: true,
         screenshot: true,
         sessionStorage: true
-      }, function(err, data) {
+      };
+
+      window.me = new whoami(options, function(data) {
+        alert('Success! Show in console');
+        console.log(data);
+      });
+
+      window.meApi = new whoami('http://localhost:8080/api?to=slack', options, function(err, data) {
         alert(err ? 'Failure :(' : 'Success! :)');
         console.log(err, data);
       });
     </script>
   </head>
   <body>
-    <button onClick="window.me.execute();">Capture!</button>
+    <button onClick="window.me.execute();">Capture and alert</button>
+
+    <button onClick="window.meApi.execute();">Capture and send to API</button>
   </body>
 </html>

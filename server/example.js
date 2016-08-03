@@ -42,19 +42,18 @@ app.post('/api', function(req, res) {
   // detect browser user agent
   var agent = useragent.parse(output.basic.userAgent);
 
-  // upload screenshot to cloudinary and omit from output
+  // upload screenshot to cloudinary
   var uploadScreenshot = new Promise(function(resolve) {
-    if (!output.screenshot) { return resolve(null); }
+    if (!output.screenshot) { return resolve(); }
     cloudinary.uploader.upload(output.screenshot, function(result) {
-      resolve(result.secure_url);
+      output.screenshot = result.secure_url;
+      resolve();
     });
   });
-  delete output.screenshot;
 
   if (params.to === 'slack') {
     uploadScreenshot
-    .then(function(screenshot) {
-
+    .then(function() {
       slackAPI.send({
         text: 'New ticket received',
         channel: process.env.SLACK_CHANNEL,
@@ -76,17 +75,17 @@ app.post('/api', function(req, res) {
             { title: 'Resolution', value: output.basic.resolution, short: true },
             { title: 'Errors', value: output.error.length, short: true },
             { title: 'Console', value: output.console.length, short: true },
-            { title: 'Screenshot', value: screenshot }
+            { title: 'Screenshot', value: output.screenshot }
           ]
         }]
       });
-
     });
   }
 
   res.json({ success: 1 });
 });
 
+// enable test page
 if (process.env.NODE_ENV !== 'production') {
   app.use(express.static('dist'));
 }

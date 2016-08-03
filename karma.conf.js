@@ -117,8 +117,7 @@ module.exports = function(config) {
 
     babelPreprocessor: {
       options: {
-        presets: ['es2015'],
-        sourceMap: 'inline'
+        presets: ['es2015']
       }
     },
 
@@ -152,6 +151,6 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: 1
+    concurrency: 2
   })
 }

@@ -53,7 +53,6 @@ describe('console', () => {
 
   it('test deep object', () => {
     const obj = {
-      fn: function(e) { return e },
       text: 'text',
       value: 321
     }
@@ -62,7 +61,17 @@ describe('console', () => {
     me.execute();
     const output = me.store.get('console');
 
-    expect(output[0].message).to.equal(`"string" {fn: function(e) { return e; }, text: "text", value: 321}`);
+    expect(output[0].message).to.equal(`"string" {text: "text", value: 321}`);
+  });
+
+  it('test function in object', () => {
+    const obj = { fn: function(arg) { return arg } }
+    console.log('string', obj);
+
+    me.execute();
+    const output = me.store.get('console');
+
+    expect(output[0].message).to.have.match(/string(.*)fn\:(.*)function(.*)return(.*)arg/);
   });
 
 });

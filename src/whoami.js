@@ -8,8 +8,11 @@ class whoami {
       callback = options;
       options = apiUrl;
       apiUrl = undefined;
-    } else if (typeof(options) === 'function') {
+    } else if (isFunction(options)) {
       callback = options;
+      options = {};
+    } else if (isFunction(apiUrl)) {
+      callback = apiUrl;
       options = {};
     }
 

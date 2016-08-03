@@ -1,7 +1,7 @@
 describe('basic', () => {
 
   it('execute', () => {
-    const me = new whoami({ filters: { basic: true } });
+    const me = new whoami({ basic: true });
     const time = +new Date();
 
     document.title = 'whoami.js title'

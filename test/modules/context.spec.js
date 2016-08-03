@@ -6,7 +6,7 @@ describe('context', () => {
       email: `random${Math.random()}@myemail.com`,
       isLogged: true
     }
-    const me = new whoami({ context: context, filters: { context: true } });
+    const me = new whoami({ context: context });
 
     me.execute();
 

@@ -1,6 +1,6 @@
 {
   "name": "whoami.js",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A simple and lightweight browser detection and logger library",
   "main": "dist/whoami.min.js",
   "scripts": {

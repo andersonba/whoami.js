@@ -6,8 +6,6 @@ module.exports = {
 
   entry: './src/whoami.js',
 
-  devtool: 'source-map',
-
   output: {
     path: './dist',
     filename: 'whoami.min.js',
@@ -31,7 +29,9 @@ module.exports = {
         baseDir: ['dist']
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({ minimize: true })
+    new webpack.optimize.UglifyJsPlugin({
+      minimize: true
+    })
   ],
 
   resolve: {

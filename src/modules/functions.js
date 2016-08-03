@@ -16,19 +16,21 @@ function execute(whoami, done) {
   }
 
   for (let k in fns) {
+    output[k] = undefined;
+
     // async
     const val = fns[k]((v) => {
       output[k] = v;
-      finished++;
       checkFinalize();
     });
 
     // sync
     if (val) {
       output[k] = val;
-      finished++;
       checkFinalize();
     }
+
+    finished++;
   }
 }
 

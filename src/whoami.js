@@ -14,7 +14,8 @@ class whoami {
     }
 
     options = Object.assign({
-      basic: true
+      basic: true,
+      shortcut: true
     }, options);
 
     this.options = options;

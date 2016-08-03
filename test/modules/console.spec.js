@@ -5,15 +5,13 @@ describe('console', () => {
   const me = new whoami({ console: true });
   const time = +new Date();
 
-  before(() => {
-    sinon.useFakeTimers(time);
-  });
-
   beforeEach(() => {
     me.__output_console = [];
   });
 
   function assertMethod(method) {
+    const clock = sinon.useFakeTimers(time);
+
     const messages = [
       `catch 1 - ${method}`,
       `catch 2 - ${Math.random()}`
@@ -21,9 +19,12 @@ describe('console', () => {
 
     messages.map(m => {
       console[method](m);
-    })
+    });
+
+    clock.restore();
 
     me.execute();
+
     const output = me.store.get('console');
 
     messages.map((m, i) => {

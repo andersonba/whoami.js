@@ -6,8 +6,11 @@ describe('basic', () => {
 
     document.title = 'whoami.js title'
 
-    sinon.useFakeTimers(time);
+    const clock = sinon.useFakeTimers(time);
+
     me.execute();
+
+    clock.restore();
 
     const output = me.store.get('basic');
 

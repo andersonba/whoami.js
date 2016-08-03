@@ -1,4 +1,4 @@
-describe('shortcut', (done) => {
+describe('shortcut', () => {
 
   function simulateKeyEvent(el, method, char, modifiers) {
     const ev = document.createEvent('Events');
@@ -12,7 +12,7 @@ describe('shortcut', (done) => {
     el.dispatchEvent(ev);
   }
 
-  it('init', () => {
+  it('init', (done) => {
     let isExecuted;
 
     new whoami({
@@ -23,7 +23,7 @@ describe('shortcut', (done) => {
       simulateKeyEvent(document, 'keydown', '0', ['ctrl']);
 
       expect(!!isExecuted).to.be.true;
-      done()
+      done();
     }, 0);
 
   });

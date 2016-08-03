@@ -185,7 +185,7 @@ code, .hljs {
 
 #screenshot-img {
   background: #fdf9f0;
-  min-width: 500px;
+  min-width: 200px;
   width: 50%;
   padding: 1.5rem 1rem;
   padding-left: 12px;
@@ -195,17 +195,36 @@ code, .hljs {
 .filter-group {
   padding-left: 20px;
 }
+.filter-group .button {
+  vertical-align: top;
+  padding: 0 2rem;
+}
+
+input[type=text].function-name {
+  width: 100px;
+}
+input[type=text].function-code {
+  width: 70%;
+}
+.function-item {
+  padding-top: 5px;
+}
+.filter-group .button.function-add {
+  margin-top: 10px;
+  margin-left: 0;
+  height: 30px;
+  padding: 0 16px;
+  line-height: 30px;
+}
 
 #result {
   margin-top: 15px;
   padding-top: 5px;
 }
 
-#function-name {
-  width: 100px;
-}
-#function-code {
-  width: 70%;
+#output {
+  max-height: 270px;
+  overflow: auto;
 }
 
 .hide { display: none; }

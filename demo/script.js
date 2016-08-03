@@ -1,6 +1,5 @@
 ﻿var submitBtn = document.getElementById('submit');
-var functionName = document.getElementById('function-name');
-var functionCode = document.getElementById('function-code');
+var functionFilters = document.getElementsByClassName('functions-filters')[0];
 
 // submit button
 submitBtn.addEventListener('click', function(e) {
@@ -9,7 +8,7 @@ submitBtn.addEventListener('click', function(e) {
 });
 
 // shortcut
-document.addEventListener('keydown', e => {
+document.addEventListener('keydown', function(e) {
   if (e.ctrlKey && String.fromCharCode(e.which) === '0') {
     submitBtn.dispatchEvent(new Event('click'));
   }
@@ -18,38 +17,60 @@ document.addEventListener('keydown', e => {
 // toggle groups
 var toggleGroup = document.getElementsByClassName('filter-group-input');
 for (var i=0, len=toggleGroup.length; i<len; i++) {
-  toggleGroup[i].addEventListener('change', function() {
-    this.parentNode.nextElementSibling.nextElementSibling.style.display = this.checked ? 'block' : 'none';
+  var input = toggleGroup[i];
+  input.addEventListener('change', function() {
+    var group = this.parentNode.nextElementSibling.nextElementSibling;
+    group.style.display = this.checked ? 'block' : 'none';
   });
 }
+
+// functions add
+var control = document.getElementsByClassName('function-fork')[0].cloneNode(true);
+var inputsControl = control.querySelectorAll('input');
+inputsControl[0].value = 'myFunction';
+inputsControl[1].value = 'function() {}';
+
+document.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('function-add')) { return; }
+
+  var newElement = control.cloneNode(true);
+  var inputsNew = newElement.querySelectorAll('input');
+
+  functionFilters.insertBefore(newElement, document.getElementsByClassName('function-add')[0]);
+});
+
+// functions remove
+document.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('function-remove')) { return; }
+  e.target.parentNode.remove();
+});
 
 
 function isChecked(name) {
   return document.querySelector('[name="'+name+'"]').checked;
 }
 
-function mountFunctions() {
+function mountObjFromFunctionItems(modifier) {
+  modifier = modifier || function(r) { return r };
+  var items = document.getElementsByClassName('function-item');
   var output = {};
-  output[functionName.value] = eval('fn = ' + functionCode.value);
+  Array.prototype.forEach.call(items, function(node) {
+    output[node.querySelectorAll('.function-name')[0].value] = modifier(node.querySelectorAll('.function-code')[0].value);
+  });
   return output;
+}
+
+function mountFunctions() {
+  return mountObjFromFunctionItems(function(code) {
+    return eval('fn = ' + code);
+  });
 }
 
 function rawCode(options) {
   if (isChecked('functions')) {
-    delete options.filters.functions;
-    options.filters.functions = {};
-    options.filters.functions[functionName.value] = functionCode.value;
+    delete options.functions;
+    options.functions = mountObjFromFunctionItems();
   }
-  options.cloudinary = {
-    name: 'CLOUD_NAME',
-    key: 'API_KEY',
-    preset: 'UNSIGNED_PRESET'
-  };
-  ['clipboard', 'ajax', 'slack', 'context', 'shortcut'].map(function(k) {
-    if (options[k] === false || options[k] === null || options[k] === undefined) {
-      delete options[k];
-    }
-  });
   return 'new whoami(' + JSON.stringify(options) + ');';
 }
 
@@ -61,54 +82,32 @@ function configureAndExecute() {
   submit.innerHTML = 'CAPTURING...';
   result.style.display = 'none';
 
-  var options = {
-    cloudinary: {
-      name: 'whoami',
-      key: '239596714167885',
-      preset: 'scalg9q6'
-    },
-    clipboard: isChecked('clipboard'),
-    ajax: isChecked('ajax') ? {
-      url: '/api',
-      callback: function(err, response) {
-        var code;
-        try {
-          code = JSON.parse(response).code;
-        } catch(err) { code = '012345' }
+  var options = {};
+  ['context', 'functions', 'basic', 'screenshot', 'error', 'cookie', 'localStorage', 'sessionStorage', 'console'].map(function(k) {
+    if (!isChecked(k)) { return; }
 
-        if (err) {
-          return alert('Submit failed, try again or contact us.');
-        }
-        alert('Thanks! Your feedback code is "' + code + '"');
-      }
-    } : null,
-    slack: isChecked('slack') ? 'HOOK_URL' : null,
-    context: isChecked('context') ? {id: 123, username: 'myuser', email: 'user@email.com'} : null,
-    shortcut: false,
-    filters: {
-      functions: isChecked('functions') ? mountFunctions() : null,
-      basic: isChecked('basic'),
-      screenshot: isChecked('screenshot'),
-      exception: isChecked('exception'),
-      cookie: isChecked('cookie'),
-      localStorage: isChecked('localStorage'),
-      sessionStorage: isChecked('sessionStorage'),
-      feedback: isChecked('feedback'),
-      console: isChecked('console') ? {
+    var val = true;
+    switch (k) {
+      case 'context': val = {id: 123, username: 'myuser', email: 'user@email.com'}; break;
+      case 'functions': val = mountFunctions(); break;
+      case 'console': val = {
         log: isChecked('console.log'),
         error: isChecked('console.error'),
         info: isChecked('console.info'),
-        warn: isChecked('console.warn'),
-      } : false
+        warn: isChecked('console.warn')
+      }; break;
     }
-  };
+
+    options[k] = val;
+  });
 
   var me = new whoami(options, function(output) {
     var screenshot = output.screenshot;
+    output.screenshot = '[base64]';
 
     // write payload
     result.style.display = 'block';
-    document.getElementById('options').innerHTML = rawCode(JSON.parse(JSON.stringify(options)));
+    document.getElementById('options').innerHTML = rawCode(JSON.parse(JSON.stringify(options))).replace(/\"([^(\")"]+)\":/g,"$1: ").replace(/,/g, ', ');
     document.getElementById('output').innerHTML = JSON.stringify(output);
     submit.disabled = false;
     submit.innerHTML = 'CLICK HERE';

@@ -1,5 +1,11 @@
 const utils = {
 
+  callCallback(cb) {
+    if (typeof cb === 'function') {
+      cb.apply(null, Array.prototype.slice.call(arguments, 1));
+    }
+  },
+
   isArray(arr) {
     return Object.prototype.toString.call(arr) === '[object Array]';
   },

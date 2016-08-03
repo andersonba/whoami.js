@@ -1,4 +1,4 @@
-import { postRequest, isFunction } from './utils';
+import { postRequest, isFunction, callCallback } from './utils';
 import store from './store';
 
 class whoami {
@@ -54,7 +54,7 @@ class whoami {
     }.bind(this));
   }
 
-  execute() {
+  execute(callback) {
     this.store.clear();
 
     this.__executeModules(() => {
@@ -70,18 +70,16 @@ class whoami {
             throw new Error('Failed to parse whoami response', data);
           }
 
-          if (typeof this._callback === 'function') {
-            this._callback(err, data)
-          }
+          callCallback(callback, err, data);
+          callCallback(this._callback, err, data);
         }.bind(this));
 
         return;
       }
 
       // pass to callback
-      if (this._callback) {
-        this._callback(output);
-      }
+      callCallback(callback, output);
+      callCallback(this._callback, output);
 
     });
   }

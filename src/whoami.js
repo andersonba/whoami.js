@@ -85,23 +85,21 @@ class whoami {
 
   __executeModules(done) {
     let finished = 0;
-    const enabled = this.filters;
+    const executableFilters = this.filters.filter(f => {
+      return f in this._modules && isFunction(this._modules[f].execute);
+    });
 
     // TODO: Promise.all
-    enabled.map(filter => {
-      if (!(filter in this._modules)) { return; }
-
+    executableFilters.map(filter => {
       const fn = this._modules[filter].execute;
 
-      if (isFunction(fn)) {
-        fn(this, () => {
-          finished++;
+      fn(this, () => {
+        finished++;
 
-          if (enabled.length === finished) {
-            done();
-          }
-        });
-      }
+        if (executableFilters.length === finished) {
+          done();
+        }
+      });
     });
   }
 

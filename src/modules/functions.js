@@ -25,12 +25,12 @@ function execute(whoami, done) {
     });
 
     // sync
-    if (val) {
+    if (!output[k] && val) {
       output[k] = val;
-      checkFinalize();
     }
 
     finished++;
+    checkFinalize();
   }
 }
 

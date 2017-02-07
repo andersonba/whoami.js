@@ -14,11 +14,9 @@ module.exports = {
   },
 
   module: {
-
-    loaders: [
+    rules: [
       { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ }
     ]
-
   },
 
   plugins: [
@@ -34,8 +32,4 @@ module.exports = {
       minimize: true
     })
   ],
-
-  resolve: {
-    extensions: ['', '.js']
-  }
 }

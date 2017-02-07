@@ -1,3 +1,5 @@
+/* global ActiveXObject */
+
 const utils = {
 
   callCallback(cb) {
@@ -26,12 +28,13 @@ const utils = {
       .replace(/(\r\n|\n|\r)/gm, '')
       .replace(/\s+/g,' ');
 
-    case 'object':
+    case 'object': return () => {
       const indent = Array(ndeep || 1).join(' ');
       const objIsArray = utils.isArray(obj);
       return '{['[+objIsArray] + Object.keys(obj).map(function(key) {
         return indent + key + ': ' + utils.objToString(obj[key], (ndeep || 1) + 1);
       }).join(', ') + indent + '}]'[+objIsArray];
+    };
 
     default: return obj.toString();
     }

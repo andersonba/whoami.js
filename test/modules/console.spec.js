@@ -62,6 +62,7 @@ describe('console', () => {
     me.execute();
     const output = me.store.get('console');
 
+    // eslint-disable-next-line quotes
     expect(output[0].message).to.equal(`"string" {text: "text", value: 321}`);
   });
 

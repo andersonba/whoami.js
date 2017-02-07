@@ -30,6 +30,10 @@ var port = process.env.PORT || 8080;
 app.use(bodyParser.json());
 app.use(cors());
 
+app.get('/check', function(req, res) {
+  res.send('OK');
+});
+
 app.post('/api', function(req, res) {
   var output = req.body;
   var params = req.query;
@@ -38,8 +42,6 @@ app.post('/api', function(req, res) {
     res.status(204).json({ error: 'No payload was sent' });
     return;
   }
-
-  console.log('New request');
 
   // detect browser user agent
   var agent = useragent.parse(output.basic.userAgent);
@@ -54,9 +56,9 @@ app.post('/api', function(req, res) {
   });
 
   if (params.to === 'slack') {
-    uploadScreenshot
+    return uploadScreenshot
     .then(function() {
-      slackAPI.send({
+      return slackAPI.send({
         text: 'New ticket received',
         channel: process.env.SLACK_CHANNEL,
         username: 'whoami.js',
@@ -80,10 +82,23 @@ app.post('/api', function(req, res) {
           ]
         }]
       });
-    });
+    })
+    .then(function(data) {
+      res.json({
+        success: 1,
+        data: data
+      });
+    })
+    .catch(function(err) {
+      res.status(500).json({
+        error: err.message
+      });
+    })
   }
 
-  res.json({ success: 1 });
+  res.status(400).json({
+    error: '"to" param is invalid'
+  });
 });
 
 app.listen(port, function() {

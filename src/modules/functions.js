@@ -5,6 +5,7 @@
 function execute(whoami, done) {
 
   const fns = whoami.options.functions || {};
+  const timeout = whoami.options.functionsTimeout;
   let finished = 0;
   let output = {};
 
@@ -21,16 +22,23 @@ function execute(whoami, done) {
     // async
     const val = fns[k]((v) => {
       output[k] = v;
+      finished++;
       checkFinalize();
     });
 
     // sync
     if (!output[k] && val) {
       output[k] = val;
+      finished++;
+      checkFinalize();
     }
 
-    finished++;
-    checkFinalize();
+    setTimeout(() => {
+      if (!output[k]) {
+        finished++;
+        checkFinalize();
+      }
+    }, timeout);
   }
 }
 

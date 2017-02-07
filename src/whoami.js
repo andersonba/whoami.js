@@ -18,7 +18,8 @@ class whoami {
 
     options = Object.assign({
       basic: true,
-      shortcut: true
+      shortcut: true,
+      functionsTimeout: 5000
     }, options);
 
     this.options = options;

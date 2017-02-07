@@ -2,7 +2,8 @@
 
 describe('functions', () => {
 
-  it('execute', (done) => {
+  it('execute', function (done) {
+    this.timeout(8000);
 
     new whoami({
       functions: {
